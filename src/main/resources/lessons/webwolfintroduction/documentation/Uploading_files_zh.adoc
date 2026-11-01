@@ -1,0 +1,9 @@
+== 上传文件
+
+在本节中，你可以上传文件。上传后的文件可以从应用外部访问。例如，在 XXE 攻击中，如果 XML 要引用某个 DTD 文件，你可以用 WebWolf 托管该文件。
+
+image::images/files.png[caption="图：", style="lesson-image"]
+
+{nbsp}
+
+上传文件后，点击“链接”即可获取该文件的完整 URL。
