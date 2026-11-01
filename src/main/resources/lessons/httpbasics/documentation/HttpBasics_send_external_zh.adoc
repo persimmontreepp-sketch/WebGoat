@@ -1,0 +1,20 @@
+= 使用外部工具发送 HTTP 请求
+
+在前面的示例中，你使用 HTML 表单和浏览器 JavaScript 发送 HTTP 请求。有时攻击者需要使用外部工具发送 HTTP 请求，而不是依赖网站内置功能。
+
+== 外部工具示例
+* https://curl.se/docs/manpage.html[curl] 命令
+* Python https://docs.python-requests.org/en/latest/index.html[requests] 模块
+* Burp 或 Zap 等 HTTP 攻击代理
+
+== 练习
+
+向端点 `/WebGoat/HttpBasics/external` 发送 HTTP 请求，要求如下：
+
+* User-Agent 为 `Attacker`
+* 请求方法为 `PUT`
+* Content-Type 为 `application/json`
+* 请求正文为 `{"external": true}`
+* *确保包含浏览器中的 `JSESSIONID` 请求头*
+
+*在下方输入端点返回的机密代码，以完成本课程。*

@@ -1,0 +1,13 @@
+== 一些开源软件风险示例
+
+=== Commons Collections
+2015 年 11 月，Apache Commons Collections 的最新版本已经有 8 年之久。Commons Collections 被视为可靠稳定的组件。一位研究人员发现该组件存在反序列化问题，可以导致远程代码执行。第二天……*所有使用 Commons Collections 的人都陷入恐慌*。
+
+参考：http://www.pcworld.com/article/3004633/business-security/thousands-of-java-applications-vulnerable-to-nine-month-old-remote-code-execution-exploit.html[数千个 Java 应用容易受到存在九个月之久的远程代码执行漏洞影响]
+
+=== Dinis Cruz 和 Alvaro Munoz 对 XStream 的漏洞利用
+XStream 是一种较常见的 XML 和 JSON 解析库，其中存在一个严重的远程代码执行漏洞。+
+参考：https://diniscruz.blogspot.com/2013/12/xstream-remote-code-execution-exploit.html[Dinis Cruz 博客] +
+https://github.com/pwntester/XStreamPOC[pwntester/XStreamPOC]
+
+尝试本课程之前，你可以先阅读相关文章。来看看你能否找出如何在 WebGoat 中利用此漏洞。

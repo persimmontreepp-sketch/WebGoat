@@ -1,0 +1,30 @@
+== 试试看！从其他表中提取数据
+
+下方输入框用于根据用户的姓氏查询数据。+
+表名为 `user_data`：
+
+-------------------------------------------------------
+CREATE TABLE user_data (userid int not null,
+                        first_name varchar(20),
+                        last_name varchar(20),
+                        cc_number varchar(30),
+                        cc_type varchar(10),
+                        cookie varchar(20),
+                        login_count int);
+-------------------------------------------------------
+
+经过尝试，你发现此输入框存在 SQL 注入漏洞。
+现在你想利用已掌握的知识获取另一张表的内容。+
+要提取的表如下：
+
+-------------------------------------------------------
+CREATE TABLE user_system_data (userid int not null primary key,
+                               user_name varchar(12),
+                               password varchar(10),
+                               cookie varchar(30));
+-------------------------------------------------------
+
+*6.a)* 从表中检索所有数据。
+*6.b)* 找到方法后……Dave 的密码是什么？
+
+注意：本练习有多种解法。一种是使用 UNION，另一种是追加新的 SQL 语句。也许你能同时找到这两种方法。

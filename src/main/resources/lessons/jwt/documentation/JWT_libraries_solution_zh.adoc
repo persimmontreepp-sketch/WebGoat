@@ -1,0 +1,51 @@
+=== 解答
+
+在之前的练习中，我们了解到**不能**依赖库替我们正确处理所有情况。两个例子都说明，即使指定了 JWT 密钥并传入正确算法，也可能出问题。即使使用以下令牌：
+
+[source]
+----
+eyJhbGciOiJIUzI1NiJ9.ew0KICAiYWRtaW4iIDogdHJ1ZSwNCiAgImlhdCIgOiAxNTE2MjM5MDIyLA0KICAic3ViIiA6ICIxMjM0NTY3ODkwIiwNCiAgInVzZXIiIDogIkpvaG4gRG9lIg0KfQ.
+
+{
+  "alg" : "HS256"
+},
+{
+  "admin" : true,
+  "iat" : 1516239022,
+  "sub" : "1234567890",
+  "user" : "John Doe"
+}
+----
+
+再使用以下 Java 代码：
+
+[source]
+----
+Jwt jwt = Jwts.parser().setSigningKey(JWT_PASSWORD).parse(accessToken);
+----
+
+可以看到，我们通过 `setSigningKey` 设置了签名密钥，但该库仍然跳过了签名验证。
+
+这不仅限于传统的 `alg: none` 攻击；`alg: HS256` 也可能出现同样问题。
+
+=== 结论
+
+JWT 本身并不差。选择合适的库并正确使用它，可以缓解 JWT 的大部分问题。
+
+选择库来处理 JWT 令牌时，请务必：
+
+- 在代码中使用正确的方法验证令牌。
+- 添加测试用例，验证不可能发生算法混淆。
+- 安全团队应编写封装该库的实用方法供其他团队使用，以确保团队采用正确的解析逻辑。
+
+=== 替代方案
+如果这些要求看起来太复杂，还有许多其他会话处理方法。将会话数据存储在服务器上可以完全避免密钥混淆攻击，但会增加开销。如果仍想实现无状态会话管理，但不想使用 JWT，也可以选择其他令牌类型。
+
+==== 替代方案：Paseto
+
+JWT 中的算法混淆确实是一个问题。可以使用 PASETO（**P**latform-**A**gnostic **SE**curity **TO**kens，平台无关安全令牌）来避免此问题，目前已有 10 种编程语言实现了它。
+其缺点之一是 JWT 的普及程度很高，例如 OAuth 就会用到 JWT，因此 PASETO 未必是最佳解决方案。
+
+更多信息请参阅以下视频：
+
+video::RijGNytjbOI[youtube, height=480, width=50%]

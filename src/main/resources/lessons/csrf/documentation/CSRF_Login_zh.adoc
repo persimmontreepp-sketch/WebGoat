@@ -1,0 +1,19 @@
+:blank: pass:[ +]
+
+== 登录 CSRF 攻击
+
+在登录 CSRF 攻击中，攻击者使用自己在目标网站上的用户名和密码，伪造一条发往该网站的登录请求。如果伪造成功，正常的服务器会返回 `Set-Cookie` 请求头，指示浏览器通过保存会话 Cookie 来改变自身状态，从而使用户以攻击者的身份登录目标网站。此会话 Cookie 会将后续请求关联到用户会话，也就是攻击者的身份验证凭据。登录 CSRF 攻击可能导致严重后果。例如，下图中，攻击者先在 google.com 创建账户，受害者访问恶意网站后，便以攻击者的身份登录。之后，攻击者可能收集该用户的活动信息。
+
+{blank}
+
+image::images/login-csrf.png[caption="Figure: ", title="Login CSRF from Robust Defenses for Cross-Site Request Forgery", width="800", height="500", style="lesson-image" link="http://seclab.stanford.edu/websec/csrf/csrf.pdf"]
+
+{blank}
+更多信息请阅读这篇 http://seclab.stanford.edu/websec/csrf/csrf.pdf[论文]。
+
+本练习中，试着判断 WebGoat 是否也容易受到登录 CSRF 攻击。
+保持此标签页打开，然后在另一个标签页中创建一个新用户：在你自己的用户名之前加上 `csrf-`。
+例如，如果你的用户名是 `tom`，则新用户名应为 `csrf-tom`。
+
+以新用户身份登录。这就是攻击者通过 CSRF 会采取的操作。然后点击原始标签页中的按钮。
+由于你已使用另一个用户登录，攻击者就能得知你点击了该按钮。

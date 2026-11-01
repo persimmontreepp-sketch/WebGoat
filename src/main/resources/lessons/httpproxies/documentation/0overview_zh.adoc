@@ -1,0 +1,27 @@
+== 什么是 HTTP 代理
+
+代理是一种转发应用程序，用于将 HTTP 客户端连接到后端资源。HTTP 客户端可以是浏览器，也可以是 curl、SOAP UI、Postman 等应用程序。通常，当客户端无法直接连接互联网时，会使用此类代理进行路由并访问互联网。
+因此，HTTP 代理也非常适合测试应用。你可以随时查看代理日志，了解实际从客户端发送到服务器的内容，包括请求和响应头，以及 XML、JSON 或其他载荷。
+
+HTTP 代理接收客户端请求并转发请求。它们通常也会记录请求。它们充当中间人。只要客户端或浏览器信任 HTTP 代理的证书，无论使用 HTTPS 还是 HTTP，代理都能正常工作。
+
+{nbsp} +
+
+=== HTTP 代理工具示例
+主要有两种 HTTP 代理工具：https://portswigger.net/burp[Burp Suite] 和 https://www.zaproxy.org/[Zed Attack Proxy]。请完成后续课程，了解它们各自的用法。
+
+{nbsp} +
+
+=== 后续页面
+
+你可以依次浏览所有课程页面，也可以点击以下链接跳过部分页面。
+
+==== ZAP
+* link:start.mvc#lesson/HttpProxies.lesson/1[ZAP 基础]
+* link:start.mvc#lesson/HttpProxies.lesson/2[ZAP 拦截]
+* link:start.mvc#lesson/HttpProxies.lesson/3[其他 ZAP 工具]
+
+==== Burp Suite
+* link:start.mvc#lesson/HttpProxies.lesson/4[Burp Suite 基础]
+* link:start.mvc#lesson/HttpProxies.lesson/5[Burp Suite 拦截]
+* link:start.mvc#lesson/HttpProxies.lesson/6[其他 Burp Suite 工具]

@@ -1,0 +1,26 @@
+== 不可变查询
+
+这是防止 SQL 注入的最佳方法。它们要么不包含可能被解释的数据，要么将数据视为绑定到某一列的单一实体，不对其进行解释。
+
+=== 静态查询
+
+----
+String query = "SELECT * FROM products";
+----
+
+----
+String query = "SELECT * FROM users WHERE user = '" + session.getAttribute("UserID") + "'";
+----
+
+=== 参数化查询
+
+----
+String query = "SELECT * FROM users WHERE last_name = ?";
+PreparedStatement statement = connection.prepareStatement(query);
+statement.setString(1, accountName);
+ResultSet results = statement.executeQuery();
+----
+
+=== 存储过程
+
+仅当存储过程不会生成动态 SQL 时才安全。

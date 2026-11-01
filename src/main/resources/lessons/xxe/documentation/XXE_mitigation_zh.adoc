@@ -1,0 +1,24 @@
+== XXE 缓解措施
+
+要防范 XXE 攻击，必须确保验证来自不可信客户端的输入。在 Java 中，还可以指示解析器完全忽略 DTD，例如：
+
+[source]
+----
+XMLInputFactory xif = XMLInputFactory.newFactory();
+xif.setProperty(XMLInputFactory.SUPPORT_DTD, false);
+----
+
+如果无法完全关闭 DTD 支持，也可以指示 XML 解析器忽略外部实体，例如：
+
+[source]
+----
+XMLInputFactory xif = XMLInputFactory.newFactory();
+xif.setProperty(XMLInputFactory.IS_SUPPORTING_EXTERNAL_ENTITIES, false);
+xif.setProperty(XMLInputFactory.SUPPORT_DTD, true);
+----
+
+有关配置的更多信息，请参阅 https://cheatsheetseries.owasp.org/cheatsheets/XML_External_Entity_Prevention_Cheat_Sheet.html[XXE 防护备忘单]。
+
+=== 验证
+
+正确验证 Content-Type 和 Accept 请求头，不要单纯依赖框架处理传入请求。如果客户端指定了合适的 Accept 请求头，请返回 `406/Not Acceptable`。

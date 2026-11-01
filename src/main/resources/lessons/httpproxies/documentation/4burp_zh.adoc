@@ -1,0 +1,59 @@
+== Burp Suite
+
+=== 什么是 Burp Suite？
+Burp Suite 被视为 HTTP 代理的行业标准，是 Web 安全研究公司 PortSwigger 创建的专有图形化工具。
+它有企业版和社区版两个版本；社区版已足够用于 WebGoat。Burp 提供一系列模块，让渗透测试人员查看、拦截和篡改 HTTP(S) 流量。值得关注的模块包括：允许用户拦截并修改浏览器请求的代理、用于重复发送和篡改已发请求的 Repeater，以及辅助执行暴力破解攻击的 Intruder。
+
+{nbsp} +
+
+=== 安装 Burp Suite
+WebGoat 中有一个练习目前只能使用 Burp，尚无法通过 ZAP 完成。
+
+你可以下载 Burp 社区版 https://portswigger.net/burp/communitydownload[JAR 文件,window=_blank]。
+
+[source]
+----
+java -jar burpsuite_community_{VERSION}.jar
+----
+
+选择 `temporary project`，然后选择 `use burp defaults`。
+
+进入代理选项，将端口更改为非 `8080` 或 `9090` 的端口，因为它们会与 WebGoat 冲突。
+
+image::images/burpproxy-updated.png[Burp proxy options,style="lesson-image"]
+
+{nbsp} +
+
+在此页面中，你也可以导出 Burp 证书并导入浏览器。操作方法与 link:start.mvc#lesson/HttpProxies.lesson/3[其他 ZAP 工具]中的说明类似。
+
+进入代理拦截页面并关闭拦截开关。（默认情况下以及下图中，拦截是开启的。）
+
+image::images/burpintercept-updated.png[Burp intercept,style="lesson-image"]
+
+{nbsp} +
+
+然后启动连接到代理的浏览器并使用 WebGoat。
+
+注意：Burp 也支持手动配置浏览器。教程链接请见 https://portswigger.net/burp/documentation/desktop/external-browser-config[此处]。
+
+WebGoat 使用 WebSocket 进行内部通信。为避免 Burp 捕获这些请求，请在 target 标签页中配置作用域。
+
+*务必启用“Use advanced scope control”*
+
+将 WebGoat 地址添加到作用域中，并使用以下正则表达式包含文件：`.*WebGoat*.`。为内部 WebSocket `.*\.mvc.*` 和课程页面 `.*\.lesson.*` 创建排除规则。
+
+image::images/burptarget.png[Burp target tab,style="lesson-image"]
+
+现在需要告诉 Burp Suite 忽略目标作用域之外的流量。进入 `Proxy` 标签页，点击 `Proxy Settings`，然后在 `Request Interception Rules` 下选择 `Is in target scope`。
+
+image::images/burpproxyscope.png[Burp client filtering by scope,style="lesson-image"]
+
+{nbsp} +
+
+然后点击前面提到的开关启用拦截。
+
+拦截效果如下：
+
+image::images/burpintercepted-updated.png[Request intercepted in Burp Suite,style="lesson-image"]
+
+拦截请求后，选择请求并点击 `Forward` 或 `Drop` 按钮，即可转发或丢弃请求。

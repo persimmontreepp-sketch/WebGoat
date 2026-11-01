@@ -1,0 +1,7 @@
+== 使用 GET 请求的 CSRF
+
+这是最容易发动的 CSRF 攻击。例如，你收到一封包含以下内容的电子邮件：
+
+`<a href="http://bank.com/transfer?account_number_from=123456789&account_number_to=987654321&amount=100000">View my Pictures!</a>`
+
+如果用户仍登录着 bank.com，这条简单的 GET 请求就会将资金从一个账户转到另一个账户。当然，实际网站通常还会有多项审批控制。

@@ -1,0 +1,28 @@
+= 安全默认配置
+
+各种系统中都存在一个重大问题：使用默认配置。例如，路由器上的默认用户名/密码、密钥库的默认密码、默认未加密模式等。
+
+== Java cacerts
+
+你是否曾经_*更改过密码*_？为 cacerts 文件设置密码会产生一些影响。当需要保护受信任的证书颁发机构，并防止轻易添加未知的自签名证书颁发机构时，这一点很重要。
+
+== 保护你的 id_rsa 私钥
+
+你是否使用 SSH 密钥访问 GitHub 或其他站点，却让私钥以未加密形式存储在磁盘上，甚至云盘上？默认情况下，生成 SSH 密钥对时，私钥不会加密。如果密钥只存储在只有你能访问的位置，这样使用起来更方便，也能提供足够保护。不过，最好还是对密钥进行加密。需要使用密钥时，你必须再次输入密码。
+
+== 使用 SSH 用户名/密码登录服务器
+
+从主机服务商处获取虚拟服务器时，通常会遇到很多不够安全的默认设置。其中一个是 SSH 使用默认端口 22，并允许尝试用户名/密码登录。首先应该更改配置，禁止以 root 用户身份通过 SSH 登录，也禁止使用用户名/密码登录，只允许使用有效且强度足够的 SSH 密钥。如果不这样做，就会发现服务器不断受到暴力破解登录尝试。
+
+== 练习
+
+本练习中，你需要获取一个意外遗留在 Docker 容器镜像中的机密。然后使用该机密解密以下消息：*U2FsdGVkX199jgh5oANElFdtCxIEvdEvciLi+v+5loE+VCuy6Ii0b+5byb5DXp32RPmT02Ek1pf55ctQN+DHbwCPiVRfFQamDmbHBUpD7as=*。
+你可以登录正在运行的容器（`docker exec ...`），访问 `/root` 中的密码文件，然后在容器中使用 openssl 命令（以兼容 Windows/Mac/Linux 上的 openssl）。
+可以使用以下 Docker 镜像查找机密，并按如下方式启动：
+
+	docker run -d webgoat/assignments:findthesecret
+
+[source]
+----
+echo "U2FsdGVkX199jgh5oANElFdtCxIEvdEvciLi+v+5loE+VCuy6Ii0b+5byb5DXp32RPmT02Ek1pf55ctQN+DHbwCPiVRfFQamDmbHBUpD7as=" | openssl enc -aes-256-cbc -d -a -kfile ....
+----

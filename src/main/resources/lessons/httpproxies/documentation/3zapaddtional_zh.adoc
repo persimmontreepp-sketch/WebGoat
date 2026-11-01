@@ -1,0 +1,100 @@
+== ZAP（其他功能）
+
+=== 使用 ZAP 的“编辑并重新发送”功能
+
+除了拦截请求外，也可以在 ZAP 中重新发送同一请求。这样有助于完成练习，因为你无需切换到 ZAP、启用拦截按钮、返回 WebGoat 并从浏览器再次发出请求。
+
+来看一个示例。我们将使用 WebWolf 简介课程中的电子邮件示例。该课程会生成一条发往 `/WebGoat/WebWolf/mail` 的请求。在“History（历史记录）”窗口中找到要重新发送的 URL，右键点击并选择 `Open/Resend with Request Editor`。也可以在 ZAP 左侧窗格中找到该请求，如下图红色箭头所示：
+
+image::images/zap_edit_and_resend.png[Open/Resend with Request Editor,style="lesson-image"]
+
+{nbsp} +
+
+此时会打开一个新窗口，你可以在其中修改请求，例如将电子邮件地址改为其他收件人，然后重新发送。在响应标签页中，可以检查请求响应。有些练习会在响应中显示已解决消息；有时则会返回需要在 WebGoat 中提交的代码/标记。务必留意响应。如果通过发送请求解决练习，WebGoat 会自动将该练习标记为已解决。
+
+image::images/zap_edit_and_send.png[Open/Resend with Request Editor,style="lesson-image"]
+
+{nbsp} +
+
++++
+<img class="lesson-image" src="images/zap_edit_and_response.png"/>
++++
+
+image::images/zap_edit_and_response.png[Open/Resend response,style="lesson-image"]
+
+=== 将 ZAP 代理用于 HTTPS
+
+ZAP 代理也可以配置为代理 *HTTPS* 请求。它会在 ZAP 中终止 HTTPS 连接，然后使用自己的密钥库将请求转发到目标。你甚至可以代理到使用双向 TLS 的站点。在这种情况下，你需要在 OWASP ZAP 中配置要用于连接的密钥库和密钥。
+
+要代理双向 TLS 的 HTTPS 站点，请打开 Tools/Options/Client Certificate。
+要设置超时或强制使用 TLSv1.2 等，请打开 Tools/Options/Connection。
+
+==== 导出证书
+
+根据本地工具安装情况，ZAP 可以直接启动浏览器，并调整一些选项（例如网络设置和证书设置）。如果要独立于 ZAP 启动浏览器，则需要执行此步骤。为了使用浏览器，你需要将证书导入浏览器，可在此处导出证书：
+
+image::images/rootca.png[ZAP root CA,style="lesson-image"]
+image::images/savecerts.png[ZAP save CA,style="lesson-image"]
+
+==== 导入 OWASP ZAP 根证书
+
+. 在 Firefox 菜单中打开 Preferences（Mac、Linux）或 Options（Windows）。
+. 搜索 _certificates_。
+. 点击 _View certificates_。
+. 导入已保存的 ZAP 根证书（参见上一页）。
+
+image::images/firefoxsettingscerts.png[Firefox Certificates,width="75%",style="lesson-image"]
+
+image::images/importcerts.png[Firefox Certificate import,width="75%",style="lesson-image"]
+
+=== 手动设置代理
+
+如果要使用 Burp，或通过 ZAP 运行浏览器不起作用，则需要进行一些额外配置。最新版本的 Chrome 和 Firefox 默认不再代理 localhost 流量。
+
+==== 选项 1：更改浏览器设置
+
+- 在较新的 Firefox 版本（>= 67）中代理 localhost（及相关地址），必须将偏好设置 `network.proxy.allow_hijacking_localhost`（可通过 `about:config` 页面访问）设置为 `true`。
+- 在较新的 Chrome 版本（>= 72）中代理 localhost（及相关地址），必须提供命令行参数 `--proxy-bypass-list=<-loopback>`。
+
+==== 选项 2：使用 www.webgoat.local
+
+- 使用计算机主机名替代 `localhost`。你可以在 Linux 和 MacOSX 的 `/etc/hosts` 或 Windows 的 `C:\Windows\System32\drivers\etc` 中查看或添加主机名。
+
+image::images/newlocalhost.png[Hosts file,style="lesson-image"]
+
+然后在浏览器中使用 http://www.webgoat.local:8080/WebGoat 作为地址。
+
+==== 配置浏览器使用代理
+
+要在浏览器中手动配置代理，请参考以下任一配置：
+
+==== Firefox 代理配置
+
+. 在 Firefox 菜单中打开 Preferences（Mac、Linux）或 Options（Windows）。
+. 在左侧选择 _Advanced_。
+. 在高级面板中选择 _Network_。
+. 点击 _Settings_。
+. 选择 _Manual proxy configuration_。
+.. 在代理栏输入 *127.0.0.1*（或者根据上面的选择输入 www.webgoat.local）。
+.. 如果在本地运行 WebGoat 并已将 ZAP 更新为 8090 端口，则在端口栏输入 *8090*（否则输入 *8080*）。
+.. 勾选 _Use this proxy server for all protocols_。
+
+image::images/firefox-proxy-config.png[Firefox Proxy Config,510,634,style="lesson-image"]
+
+==== Chrome 代理配置
+
+. 在菜单中打开 Chrome 设置。
+. 在 _Search settings_（搜索设置）框中输入 *proxy*，然后按 Enter/Return。此时应会出现 Network 标题和 _Change proxy settings_ 按钮。
+. 点击 _Change proxy settings_ 按钮。
+. 选择 _proxies_ 标签页。
+. 选择 Web Proxy (HTTP)。
+. 在 _Web Proxy Server_ 下方第一个框中输入 127.0.0.1（或按上文选择输入 www.webgoat.local），并在右侧第二个框中输入端口号（本地运行 WebGoat 时为 8090，否则为 8080）。
+. 你也可以清除底部 _Bypass proxy settings for these Hosts & Domains_ 文本框中的内容，不过通常不需要这样做。
+
+image::images/chrome-manual-proxy.png[Chrome Proxy Config,700,447,style="lesson-image"]
+
+（上方为 Mac 配置图片）
+
+image::images/chrome-manual-proxy-win.png[Chrome Proxy, 394,346,style="lesson-image"]
+
+（上方为 Windows 配置图片）

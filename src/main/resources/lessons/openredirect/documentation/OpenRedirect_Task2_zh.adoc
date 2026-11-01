@@ -1,0 +1,17 @@
+== 绕过朴素的子串过滤器
+
+开发人员尝试快速修复：除非提供的 URL 包含子串 `webgoat`，否则拒绝所有重定向。
+
+这*不是*正确的允许列表。
+
+目标：
+
+* 构造一个包含子串 `webgoat`，但实际主机名不是以下允许主机之一的 URL：`webgoat.local`、`webgoat.org`、`localhost`。
+
+以下示例应该有效：
+
+* `https://webgoat.org.evil.com`
+* `https://webgoat.local.attacker.net`
+* `https://webgoat.org@evil.com/path`
+
+成功后会看到确认信息，表明你绕过了朴素过滤器。

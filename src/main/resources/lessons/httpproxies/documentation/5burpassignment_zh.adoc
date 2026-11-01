@@ -1,0 +1,10 @@
+=== 使用 Burp Suite 拦截和修改请求
+
+按照以下说明使用 Burp Suite 拦截、修改并转发请求。
+
+* 开启拦截
+* 点击下方的 `Submit` 按钮
+* 将方法改为 GET
+* 添加请求头 `x-request-intercepted:true`
+* 删除请求正文，并改为发送值为 `Requests are tampered easily` 的查询字符串参数 `changeMe`（不包括单引号）
+* 转发请求

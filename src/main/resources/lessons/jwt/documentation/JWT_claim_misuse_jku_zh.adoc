@@ -1,0 +1,86 @@
+== 声明滥用
+
+如果头部信息遭到篡改或不当操纵，就可能出现头部声明滥用。
+
+=== JSON Web Key URL（JKU）
+
+JKU 是 JWT 规范的一部分，允许 JWT 使用方动态获取验证令牌签名所需的公钥。
+它是一个指向 JSON Web Key Set（JWKS）端点的 URL，其中包含签发方用于签署 JWT 的公钥。
+
+JKU 示例：
+
+[source]
+----
+{
+"jku": "https://example.com/.well-known/jwks.json"
+}
+----
+
+=== 漏洞：滥用 JWT 的 JKU 声明
+
+当 JWT 使用弱密钥或可预测的密钥签名，而服务器提供的 JKU 指向一个托管公钥的外部位置时，就会产生漏洞。
+
+攻击者可以构造带有恶意声明的 JWT，并利用 `jku` 欺骗服务器，使其使用弱密钥或被操纵的密钥验证 JWT。具体是否可行取决于应用使用的库。某些库默认会阻止从随机服务器下载内容，并使用允许的 URL 列表。不过，实施 URL 过滤相当困难，而且也可能被绕过。
+
+==== 利用步骤：
+
+- **识别 JKU 端点**：攻击者首先需要从应用的 JWT 处理逻辑或暴露的配置中找到 JKU 端点。
+
+- **生成恶意 JWT**：构造包含恶意声明的 JWT，通过修改或添加声明来获取未授权访问权限或提升权限。
+
+- **签署 JWT**：使用自己的私钥对恶意 JWT 签名。
+
+- **将 JWT 发送到服务器**：向服务器发送包含恶意声明的已构造 JWT。
+
+- **服务器验证**：服务器收到 JWT 后，使用从 JWKS 端点获取的公钥验证签名。
+
+- **攻击成功**：如果服务器使用弱密钥或被操纵的密钥验证 JWT，攻击者就会获得未授权访问权限，或执行其预期的攻击。
+
+==== 生成 JWK 文件
+
+用于生成 JWK 文件的工具不多。我发现 Bespoke Engineering 的开源 JWK 生成器效果最好。它提供 https://mkjwk.org/[在线版本]和 https://github.com/bspk/json-web-key-generator[CLI]。
+
+*出于安全考虑，建议使用 CLI，因为处理过程会在你的计算机上进行；不可信的外部服务器可能会保存密钥。*
+
+==== JWK 文件示例
+
+下面是一个 JWK 文件（_JSON Web Key Set_）示例，其中包含两个 `RS256` JWK 公钥，其 `KID`（密钥 ID）分别为 `example` 和 `example2`。
+
+.JWK 文件示例
+[source,json]
+----
+{
+    "keys": [
+    {
+        "kty": "RSA",
+            "e": "AQAB",
+            "kid": "example",
+            "alg": "RS256",
+            "n": "hUZW3uZNJWlPSo6QEr2eRWTJB9Iq24NrOB8BDBIGlgUgpdI-1iORl7u_L-ypgtD8U3EJNXfSJnhl9n_CsfJsDpOc2S3i0rwSfd9JI8wWyCes3fy7k7TdqMXLzwquY5EnFBCimUs7mV__EpRdNrdnH7ikufa_-DWcRqJyqPUMembBS1BanXXsbnq3zuKyizV2bWVB7NcFg_ehEyNBHzC1RqIc07HECYDTUb9m2pP-H-ah7DJds7lSz1FdYi6IXiSAl3M92rpCdZL7l2spw1ppiDFlESwHMnCICrHjRaDRyy1FrvqeCzBdTrUqTIZEvBTYH_LjutvZ6zbH9hunspkfnQ"
+    },
+    {
+        "kty": "RSA",
+        "e": "AQAB",
+        "kid": "example2",
+        "alg": "RS256",
+        "n": "1NAfP6Sh2Pb_TWEGuwRr_-VmNUOGVmfusmDl9aWfRcYAkO91a4h31tCIdemfUIcMi58x7XR0wY-z4gxWAcaFHEAqMn-vQe4r7rQDkMBGFaCX39MbjQgNA9lGzwx8FUinXw3B6dZYapun5LoN4hfcC_XjUdodjiGpKI8rtwgmmOgV07wNeOSFRpGoNYEvVu7-J53V3YAnrXiYXtzsL-9fbXn62Dt0ejYeUkbknRnH4DmidJr83lnEvGZSxjOtynBEb9UCBuX49YIy1orsi3hIDHulram2ez-LPjI2xY_Wh0tryEZBfAiPidX0Jl-tsk3j1o7F4ENzqCshAVe1J20V1Q"
+    }
+    ]
+}
+----
+
+=== 缓解措施
+
+为防止 JWT 的 JKU 声明遭到滥用，开发人员和安全专业人员应遵循以下最佳实践：
+
+- **允许列表**：使用允许列表验证令牌收到的 JKU 是否在列表中。使用字符串比较函数比较 URL 时要小心，应采用允许列表并验证 `jku` 中的完整 URL。
+
+- **静态密钥**：避免使用托管在外部端点上的 JKU 公钥。应改用妥善管理并定期更新的静态密钥。
+
+- **签名验证**：确保服务器正确验证 JWT 签名，并拒绝签名无效或遭到篡改的令牌。
+
+- **JWT 验证**：仔细验证和清理所有 JWT 声明，以防止注入攻击和未授权访问。
+
+- **审计和监控**：定期审计 JWT 使用情况，监控可疑活动，并实施异常检测机制。
+
+- **安全测试**：定期进行安全测试，包括渗透测试和代码审查，以发现并修复潜在漏洞。

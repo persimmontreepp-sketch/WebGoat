@@ -1,0 +1,24 @@
+== 加分内容：使用真实的安全密钥
+
+本练习使用浏览器的 WebAuthn API 和*漫游式身份验证器*：通过 USB、NFC 或蓝牙连接的安全密钥，或通过混合传输方式连接的手机。背后的 WebGoat 服务器会执行前几页中介绍的所有检查，包括验证 `packed` 和 `fido-u2f` 格式的证明。
+
+注册选项要求：
+
+* `authenticatorAttachment: "cross-platform"` 和 `hints: ["security-key"]`：浏览器提供安全密钥或手机，而不是内置的平台身份验证器；
+* `residentKey: "discouraged"`：使用不可发现的凭据，因此不会占用密钥上的存储槽；
+* `attestation: "direct"`：密钥会证明其制造商和型号。浏览器可能会询问你是否允许分享这些信息；
+* `userVerification: "discouraged"`：密钥用作第二因素，因此不需要 PIN。
+
+=== 要求
+
+* 在安全上下文中打开 WebGoat：使用 `https://` 或 *http://localhost:8080/WebGoat*。使用 IP 地址（例如 `127.0.0.1` 或 Docker 主机地址）不起作用，因为 IP 地址不能用作 RP ID。在 Docker 中运行 WebGoat 时，请发布端口并访问 `localhost`。
+* 没有安全密钥？在 Chrome 或 Edge 中打开 *DevTools > 更多工具 > WebAuthn*，选择 _启用虚拟身份验证器环境_，然后添加一个协议为 *ctap2*、传输方式为 *usb* 的身份验证器。
+
+=== 步骤
+
+. 点击 *注册安全密钥* 并触碰密钥。服务器会显示其验证并存储的内容：AAGUID（身份验证器型号）、证明格式和签名者，以及各项标志。安全密钥报告 `BE=false`：该凭据绑定到设备。
+. 点击 *使用安全密钥登录* 并再次触碰密钥。服务器接受断言后，练习即完成。
+
+还可以尝试在 GoatBank 练习中利用过的方法：通过代理重放请求或修改用户句柄，并观察此服务器如何响应。
+
+注意：WebGoat 不会通过 FIDO 元数据服务验证证明证书，因此无法区分真实安全密钥与高质量的软件模拟器。需要此保障的依赖方必须自行进行验证。

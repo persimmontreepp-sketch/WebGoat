@@ -1,0 +1,33 @@
+== 第 1 步：编写内容
+
+每门课程可以由多个内容页面组成，用于解释相关漏洞。内容使用 AsciiDoc 编写[https://asciidoctor.org/docs/asciidoc-writers-guide/]，这种格式易于编写内容（如果你了解 Markdown，就能理解 AsciiDoc）。
+
+网上有很好的 AsciiDoc 语法教程。下面仅作基本介绍，并说明 WebGoat 中常用的一些结构。
+
+=== 子标题
+
+请查看 AsciiDoc 语法：等号越多，标题级别越低。你可以将文本设为**粗体**等。
+
+=== 文件结构
+
+所有内容都应放在这些 *.adoc 文件中。AsciiDoc 文件位于目录 `/src/main/resources/{lesson}/documentation/`。
+
+=== 图片
+
+可以在下方引用图片，并设置样式（建议使用 lesson-image 样式）。图片根目录为 `/src/main/resources/{lesson}/images`。
+
+image::images/firefox-proxy-config.png[Firefox Proxy Config,510,634,style="lesson-image"]
+
+=== 代码块
+
+代码块格式如下：
+
+```
+[source]
+----
+public class A {
+
+  private String test;
+}
+----
+```

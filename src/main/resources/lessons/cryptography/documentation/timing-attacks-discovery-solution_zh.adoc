@@ -1,0 +1,13 @@
+=== 练习解答
+
+服务器从左向右比较提供的标签和预期标签。第一个字节错误时，比较会立即结束。第一个字节正确时，服务器会等待约 25 毫秒，然后才检查第二个字节。这两种请求都可能返回 `Invalid signature`。
+
+从已登录的 WebGoat 浏览器会话中复制 `JSESSIONID` Cookie，并替换下方的 `<your-session-id>`。所有请求都使用相同 Cookie，以确保服务器保留相同的 HMAC 机密。以下两个请求分别测试第一个字节为 `00` 和 `01` 的情况，其余字节均为零：
+
+[source,shell]
+----
+curl -sS --cookie "JSESSIONID=<your-session-id>" --write-out "\nTotal: %{time_total}s\n" "http://localhost:8080/WebGoat/crypto/timing/verify?message=WebGoat&signature=00000000"
+curl -sS --cookie "JSESSIONID=<your-session-id>" --write-out "\nTotal: %{time_total}s\n" "http://localhost:8080/WebGoat/crypto/timing/verify?message=WebGoat&signature=01000000"
+----
+
+确认两个响应都显示 `Invalid signature`。从 `00` 到 `ff` 测试所有 256 种首字节值，并对每个请求重复测量。`time_total` 包括网络和服务器耗时，因此应比较典型耗时，而不要只信任某一次测量。对于你的会话，持续多出约 25 毫秒的候选值可以揭示第一个字节。请将该字节作为两个十六进制字符提交。新会话会获得不同的标签。

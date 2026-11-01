@@ -1,0 +1,19 @@
+== 你的邮箱
+
+WebGoat 提供了一个邮箱客户端，用来查看课程中发送的电子邮件。
+点击页面右上角、语言选择器旁边的信封（邮箱）按钮即可打开邮箱。邮箱会在单独窗口中打开，按钮上的数字表示未读邮件数量。
+每位用户都有独立的邮箱。发送到 `username:user[]`@webgoat.org 的邮件都会进入对应用户的收件箱。
+
+{nbsp}
+{nbsp}
+{nbsp}
+
+image::images/menuheader.png[caption="图：", style="lesson-image"]
+
+image::images/mailbox.png[caption="图：", style="lesson-image"]
+
+{nbsp}
+{nbsp}
+{nbsp}
+
+试试看：在下方输入你的电子邮件地址，然后点击邮箱按钮打开收件箱。再把邮件中的唯一代码输入下方字段。

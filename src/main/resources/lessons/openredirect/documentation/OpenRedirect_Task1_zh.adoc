@@ -1,0 +1,12 @@
+== 基础开放重定向
+
+应用接受用户提供的 `returnUrl`（此处简称 `url`），通常会在未经验证的情况下发起重定向。
+
+目标：
+
+* 提供一个使用 `http` 或 `https` 的绝对外部 URL，且它不是以下内部主机之一：`webgoat.local`、`localhost`、`127.0.0.1`。
+
+试试：
+
+* `https://evil.test`
+* `http://attacker.example`

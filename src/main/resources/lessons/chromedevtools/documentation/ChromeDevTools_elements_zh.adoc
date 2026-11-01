@@ -1,0 +1,17 @@
+== Elements（元素）标签页
+
+Elements 标签页可用于查看定义和设置网站样式的 HTML 与 CSS 代码。
+
+=== HTML 源代码
+
+将鼠标悬停在某一行上时，网页中的某个部分会变成蓝色。这表示该行 HTML 定义了网站中的这一部分。
+Elements 标签页允许你修改每个 HTML 元素。例如，点击段落（<p>...</p>）标签内部，就可以编辑网页内容。修改完成后按回车，Chrome 会更新网页以显示修改结果。你还可以更换 HTML 标签、修改标签的 class 和 id 等。
+
+image::images/ChromeDev_Elements.jpg[DeveloperToolsElements,500,350,style="lesson-image"]
+
+=== CSS 源代码
+
+HTML 源代码下方可以查看用于设置网站样式的 CSS 信息。与 HTML 一样，你也可以编辑 CSS，从而调整网站样式。
+你可以编辑特定属性值，也可以关闭单独的样式。
+
+image::images/ChromeDev_Elements_CSS.jpg[DeveloperToolsElementsCSS,500,350,style="lesson-image"]

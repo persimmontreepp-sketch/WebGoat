@@ -1,0 +1,8 @@
+=== 试试看
+下方输入框接收一个序列化对象（字符串），并对其进行反序列化。
+
+```
+rO0ABXQAVklmIHlvdSBkZXNlcmlhbGl6ZSBtZSBkb3duLCBJIHNoYWxsIGJlY29tZSBtb3JlIHBvd2VyZnVsIHRoYW4geW91IGNhbiBwb3NzaWJseSBpbWFnaW5l
+```
+
+试着修改此序列化对象，使页面响应恰好延迟 5 秒。

@@ -1,0 +1,49 @@
+== 存储型 XSS
+
+防止存储型 XSS 的一种方法是使用 https://www.owasp.org/index.php/Category:OWASP_AntiSamy_Project[OWASP AntiSamy]。AntiSamy 可以根据可调整的策略文件生成“干净”的字符串。
+
+请看下面的 Java 类，它会将评论保存到数据库中。
+
+[source,java]
+-------------------------------------------------------
+public class MyCommentDAO {
+
+    public static void addComment(int threadID, int userID, String newComment) {
+
+                String sql = "INSERT INTO COMMENTS(THREADID, USERID, COMMENT) VALUES(?,?,?);";
+
+                try {
+                        PreparedStatement stmt = connection.prepareStatement(sql);
+
+                        stmt.setInt(1, threadID);
+                        stmt.setInt(2, userID);
+                        stmt.setString(3, newComment);
+
+                        stmt.executeUpdate();
+                } catch (SQLException e) {
+                        e.printStackTrace();
+                }
+        }
+}
+-------------------------------------------------------
+
+以下是使用 `addComment` 函数的 Java 类：
+
+[source,java]
+-------------------------------------------------------
+import org.owasp.validator.html.*;
+import MyCommentDAO;
+
+public class AntiSamyController {
+    ...
+    public void saveNewComment(int threadID, int userID, String newComment){
+        MyCommentDAO.addComment(threadID, userID, newComment);
+    }
+    ...
+}
+-------------------------------------------------------
+
+如你所见，这个 Java 文件会将未经筛选的用户输入存储到数据库中。因此，你现在已经将所有恶意代码保存在数据库里了。
+
+== 轮到你了！
+尝试在 `saveNewComment()` 函数中创建干净字符串，以防止此类 XSS。此示例请使用 `antisamy-slashdot.xml` 作为策略文件：

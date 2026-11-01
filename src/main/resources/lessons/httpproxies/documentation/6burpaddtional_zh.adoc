@@ -1,0 +1,58 @@
+== Burp Suite（其他功能）
+
+{nbsp} +
+
+=== 使用 Burp 的 Repeater 重放请求
+Burp Suite 的 Repeater 工具可以重复发送并修改已拦截的请求。在测试 API 端点输入时，这个功能非常有用。
+
+在 Burp Suite 中找到要重复发送的请求，右键点击并选择 `Send to Repeater`。
+
+image::images/burp-send-to-repeater.png[Sending a request to the repeater in Burp Suite,style="lesson-image"]
+
+{nbsp} +
+
+进入 Repeater 工具后，可以修改请求，然后点击 `Send` 按钮将其发送到服务器。左侧窗格会显示服务器响应。
+
+image::images/burp-repeater.png[The Burp Suite repeater,style="lesson-image"]
+
+{nbsp} +
+
+有关 Burp Repeater 的更多信息，请查看 https://portswigger.net/burp/documentation/desktop/tools/repeater[官方文档]。
+
+{nbsp} +
+
+=== 查看请求历史
+
+即使拦截模式已关闭，Burp Suite 也允许用户查看代理转发的所有请求。打开 `Proxy Tool`，然后选择 `HTTP history` 标签页即可。历史记录标签页中的请求可以像被拦截的请求一样发送到 Repeater 或其他工具。
+
+image::images/burp-proxy-history.png[Burp's proxy history tab,style="lesson-image"]
+
+{nbsp} +
+
+=== 上下文菜单
+Burp 包含许多实用功能，上下文菜单就是一个很好的例子。右键点击请求或选中的文本即可打开上下文菜单。
+
+*上下文菜单的用途示例：*
+
+* 对文本进行编码和解码，以用于 XXS 攻击。
+* 将请求发送到工具，例如：`Send to Repeater`。
+* 修改目标作用域，无需进入设置即可添加或删除请求。
+* 高亮显示重要请求。
+
+image::images/burp-context-menu.png[The Burp context menu,style="lesson-image"]
+
+{nbsp} +
+
+=== 将设置保存到文件
+
+除非愿意支付高昂费用购买 Burp Suite Professional，否则关闭 Burp 后无法保留项目。幸运的是，我们不需要保留整个会话，只需保存 `Target Scope` 和 `Proxy URL` 等重要设置；每次启动 Burp 时重新输入这些信息很麻烦。这些字段并非特定于某个项目，而是存储在设置中。
+
+要保存项目设置，请打开 `Settings` 菜单，点击右上角的三个点，选择 `Project settings`，最后点击 `Save project settings`。
+
+image::images/burp-save-project-settings.png[Saving project settings in Burp,style="lesson-image"]
+
+==== 加载已保存的设置
+
+设置保存后，下次启动 Burp Suite 时，系统会提示你 `Select a configuration file you want to load for this project`。不要选择 `Use Burp Defaults`，而应选择 `Load from configuration file` 并找到保存的文件。以后启动时，该文件将会作为可选项出现。
+
+image::images/burp-load-project-settings.png[Saving project settings in Burp,style="lesson-image"]

@@ -1,0 +1,53 @@
+== 特殊字符
+
+[source]
+----
+/* */      是行内注释
+-- , #     是行尾注释
+
+示例：SELECT * FROM users WHERE name = 'admin' -- AND pass = 'pass'
+----
+
+[source]
+----
+;        可用于链接查询
+
+示例：SELECT * FROM users; DROP TABLE users;
+----
+
+[source]
+----
+',+,||    可用于拼接字符串
+Char()    可在不使用引号的情况下表示字符串
+
+示例：SELECT * FROM users WHERE name = '+char(27) OR 1=1
+----
+
+== 特殊语句
+
+=== Union
+
+Union 运算符用于组合两个或多个 SELECT 语句的结果。
+
+使用 UNION 时应注意以下规则：
+
+- 每条语句选择的列数必须相同。
+- 第一个 SELECT 语句中第一列的数据类型必须与第二个（第三个、第四个……）SELECT 语句中第一列的数据类型相匹配。其他列也同样如此。
+
+[source]
+------
+SELECT first_name FROM user_system_data UNION SELECT login_count FROM user_data;
+------
+
+UNION ALL 语法也允许重复值。
+
+=== Join
+
+Join 运算符根据相关列组合两个或多个表中的行。
+
+[source]
+-----
+SELECT * FROM user_data INNER JOIN user_data_tan ON user_data.userid=user_data_tan.userid;
+-----
+
+有关 JOIN 的详细信息，请访问：https://www.w3schools.com/sql/sql_join.asp

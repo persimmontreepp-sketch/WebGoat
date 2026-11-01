@@ -1,0 +1,64 @@
+== 反射型 XSS
+
+请看下面的 HTML 文件，它会将数据传递给 JSP 文件。
+
+[source,html]
+-------------------------------------------------------
+<html>
+   <body>
+      <form action = "main.jsp" method = "POST">
+         First Name: <input type = "text" name = "first_name">
+         <br />
+         Last Name: <input type = "text" name = "last_name" />
+         <input type = "submit" value = "Submit" />
+      </form>
+   </body>
+</html>
+-------------------------------------------------------
+
+以下是 JSP 文件：
+
+[source,html]
+-------------------------------------------------------
+<html>
+
+<head>
+    <title>Using GET and POST Method to Read Form Data</title>
+</head>
+
+<body>
+    <h1>Using POST Method to Read Form Data</h1>
+    <table>
+        <tbody>
+            <tr>
+                <td><b>First Name:</b></td>
+                <td><%= request.getParameter("first_name")%></td>
+            </tr>
+            <tr>
+                <td><b>Last Name:</b></td>
+                <td>
+                    <%= request.getParameter("last_name")%>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</body>
+
+</html>
+-------------------------------------------------------
+
+如你所见，JSP 文件会直接输出未经筛选的用户输入，这绝不是好做法。
+你希望用户通过如下方式访问页面：
+
+----
+http://hostname.com/mywebapp/main.jsp?first_name=John&last_name=Smith
+----
+
+但如果有人使用下面这个链接，会发生什么？
+----
+http://hostname.com/mywebapp/main.jsp?first_name=<script>alert("XSS Test")</script>
+----
+
+=== 轮到你了！
+
+尝试在 JSP 文件中转义 URL 参数，以防止这种 XSS：

@@ -1,0 +1,8 @@
+== 动手试试！使用控制台
+
+现在来试试。打开开发者工具中的控制台并调用 JavaScript 函数 *webgoat.customjs.phoneHome()*。+
+控制台应会显示响应。结果大致如下：
+`phone home said
+{"lessonCompleted:true, ... ,"output":"phone home response is..."`
+然后将随机数粘贴到下方文本框中。
+（每次调用函数都会生成随机数，请确保使用最新的号码。）

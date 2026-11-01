@@ -1,0 +1,11 @@
+=== 上传文件时的路径遍历
+
+本练习的目标是覆盖文件系统中的某个特定文件。当然，WebGoat 关心用户安全，因此你需要将文件上传到以下常规上传目录之外的位置。
+
+|===
+|操作系统 |位置
+
+|`operatingSystem:os[]`
+|`webGoatTempDir:temppath[]PathTraversal`
+
+|===

@@ -1,0 +1,23 @@
+== 架构信息
+
+=== 重要的是什么？
+
+* 我的组件是否过旧，还是已经稳定？
+* 我的组件是否不受欢迎？
+* 我没有升级组件是有意为之，还是因为不了解情况？
+
+=== 总结
+
+* 让组件保持最新版本确实很困难。
+
+在分析的 25,000 个应用中发现：
+
+* 2 年前的组件中，有 8% 没有更新版本。
+* 11 年前的组件中，有 23% 没有更新版本。
+* 风险大多来自较旧的组件。
+
+[cols="2a,2a"]
+|===
+| image::images/Old-Components.png[caption="Figure: ", title="Old Components", alt="Old Components", width="355", height="304", style="lesson-image"]
+| image::images/Risk-of-Old-Components.png[caption="Figure: ", title="Risk of Old Components", alt="Risk of Old Components", width="355", height="304", style="lesson-image"]
+|===

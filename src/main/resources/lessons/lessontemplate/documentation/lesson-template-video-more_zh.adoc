@@ -1,0 +1,11 @@
+=== 更多内容
+
+你可以在同一页面的同一个 `<div>` 中包含多个 AsciiDoc 文件：
+
+[source]
+----
+<div class="lesson-page-wrapper">
+  <div class="adoc-content" th:replace="~{doc:lesson-template-video.adoc}"></div>
+  <div class="adoc-content" th:replace="~{doc:lesson-template-video-more.adoc}"></div>
+</div>
+----

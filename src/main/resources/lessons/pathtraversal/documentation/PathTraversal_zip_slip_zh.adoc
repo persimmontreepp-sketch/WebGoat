@@ -1,0 +1,31 @@
+=== Zip Slip 漏洞
+
+作为开发人员，你常常需要处理 zip 文件。例如，想一想文件上传功能，或处理以 zip 文件形式上传的一批 CSV 文件。Snyk 安全团队发现并负责任地披露了一种巧妙的漏洞。它利用路径遍历，在解压文件时发动攻击。攻击者尝试覆盖预期目标文件夹之外的文件。例如，解压 zip 文件时，攻击者或许能够覆盖 `ls` 命令。将该命令替换为包含恶意操作的版本后，每当用户输入 `ls`，替换后的命令就能在显示正常命令结果之前，将目录列表发送到攻击者的服务器。最终，攻击者便能实现远程命令执行。
+
+==== 问题所在
+
+问题出在 Java 解压 zip 文件的方式上，常见写法如下：
+
+[source]
+----
+File destinationDir = new File("/tmp/zip");
+Enumeration<? extends ZipEntry> entries = zip.entries();
+while (entries.hasMoreElements()) {
+  ZipEntry e = entries.nextElement();
+  File f = new File(destinationDir, e.getName());
+  InputStream is = zip.getInputStream(e);
+  IOUtils.copy(is, write(f));
+}
+----
+
+乍一看，这样写似乎没有问题，你也可能写过类似代码。正如前面练习所示，问题在于攻击者可以利用路径遍历跳出 `destinationDir`，并继续访问其他位置。
+
+假如收到的 zip 文件包含以下内容呢？
+
+[source]
+----
+orders.csv
+../../../../../../../tmp/evil.sh
+----
+
+如果使用上面的代码解压 zip 文件，文件就会保存到 `/tmp/evil.sh`。

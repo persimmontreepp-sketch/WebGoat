@@ -1,0 +1,39 @@
+== JWT 令牌的结构
+
+来看一下 JWT 令牌的结构：
+
+[role="lesson-image"]
+image::images/jwt_token.png[JWT]
+
+令牌经过 Base64 编码，由三部分组成：
+
+头部和声明都表示为 JSON 对象。头部描述应用于 JWT 的密码学操作，也可以包含 JWT 的其他属性。声明则表示一个 JSON 对象，其成员就是 JWT 携带的声明。
+
+.*头部*
+[source,json]
+----
+{
+  "alg": "HS256",
+  "typ": "JWT"
+}
+----
+根据头部信息，此 JWT 使用 `HS256` 算法签名。
+
+.*声明*
+[source,json]
+----
+{
+  "sub": "1234567890",
+  "name": "John Doe",
+  "admin": true,
+  "iat": 1516239022
+}
+----
+声明字段用于在令牌中存储 JSON 数据。用户可以在此字段中使用任意数据。常见字段包括表示签发时间的 `iat` 和表示过期时间的 `exp`。完整的特殊声明字段列表请参阅 https://datatracker.ietf.org/doc/html/rfc7519#section-4[JWT 标准 RFC]。
+
+*签名*
+
+用于签署 JWT 的机密。本例使用 `HS256` 对称算法，这意味着用于签署 JWT 的密钥也用于验证 JWT。
+
+=== 延伸阅读
+如需进一步了解 JWT 的结构，请参阅 JWT 官方网站的文档：https://auth0.com/docs/secure/tokens/json-web-tokens/json-web-token-structure[链接]。

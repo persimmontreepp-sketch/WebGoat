@@ -1,0 +1,75 @@
+=== 通过代码审查发现 XXE
+
+现在我们已经了解了注入的工作方式，来看看它为何会发生。在 Java 应用中，XML 库默认配置并不安全，因此需要修改设置。假设代码审查时发现以下代码片段：
+
+[source, java]
+----
+public XmlMapper xmlMapper() {
+  return new XmlMapper(XMLInputFactory.newInstance()) // <1>
+}
+----
+
+查看 Jackson 库的发行说明时，你读到：
+[quote, Jackson 2.7.8 (26-Sep-2016)]
+211: 除非显式覆盖，否则禁用 `XMLInputFactory` 的 `SUPPORT_DTD`
+
+==== 问题：解析器是否容易受到攻击？
+
+这段代码定义了一个新的 `XmlMapper`（`ObjectMapper`），它是一个常用的 XML 和 JSON 读写框架。沿着代码进一步追踪，我们会发现：
+
+[source, java]
+----
+/**
+ * @since 2.4
+ */
+public XmlMapper(XMLInputFactory inputF) {  // <1>
+  this(new XmlFactory(inputF)); //<2>
+}
+----
+<1> 这是上方列表（1）中调用的“构造函数”。
+<2> 调用另一个“构造函数”并初始化新的 `XmlFactory` 实例。
+
+来看一下 `XMLFactory` 的源代码：
+
+[source, java]
+----
+public XmlFactory(XMLInputFactory xmlIn) { // <1>
+  this(xmlIn, null);}// <2>
+
+protected XmlFactory(XMLInputFactory xmlIn, XMLOutputFactory xmlOut, ...){ // <3>
+  if (xmlIn == null) { //<4>
+    xmlIn = XMLInputFactory.newInstance();
+    // 根据 [dataformat-xml#190]，默认禁用外部实体展开
+    xmlIn.setProperty(XMLInputFactory.IS_SUPPORTING_EXTERNAL_ENTITIES, Boolean.FALSE); // <5>
+    // 同样，根据 [dataformat-xml#211]，默认禁用 SUPPORT_DTD
+    xmlIn.setProperty(XMLInputFactory.SUPPORT_DTD, Boolean.FALSE);// <6>
+  }
+}
+----
+<1> 这是第 3 行创建的新实例对应的“构造函数”定义。
+<2> 调用第 3 行定义的另一个“构造函数”。
+
+在第 4 行中，`if (xmlIn == null)` 不会成立，因为查看顶部的声明可知，我们创建了自己的实例 `XMLInputFactory.newInstance()`，它不为 `null`。这意味着我们使用的 XML 解析器默认**没有**针对 XXE 注入进行保护。第 5 和第 6 行有趣之处在于，额外的保护措施被嵌套在 if 语句中。
+
+例如，Spring Boot 框架初始化同一解析器的方式如下：
+
+[source, java]
+----
+public ObjectMapper create() {
+  return new XmlMapper(xmlInputFactory()); // <1>
+}
+
+private static XMLInputFactory xmlInputFactory() {
+  XMLInputFactory inputFactory = XMLInputFactory.newInstance();
+  inputFactory.setProperty(XMLInputFactory.SUPPORT_DTD, false);
+  inputFactory.setProperty(XMLInputFactory.IS_SUPPORTING_EXTERNAL_ENTITIES, false);
+  return inputFactory;
+}
+----
+<1> 调用一个可安全初始化解析器的方法。
+
+如你所见，代码通过私有方法 `xmlInputFactory()` 显式定义了 `XMLInputFactory`，并为解析器设置了前面列出的相同属性。
+
+因此，要判断解析器是否安全抵御注入并不容易；你确实需要深入研究代码和库，才能弄清解析器的配置。
+
+有关保护解析器的更多方法，请参阅 https://cheatsheetseries.owasp.org/cheatsheets/XML_External_Entity_Prevention_Cheat_Sheet.html[XXE 防护备忘单]。

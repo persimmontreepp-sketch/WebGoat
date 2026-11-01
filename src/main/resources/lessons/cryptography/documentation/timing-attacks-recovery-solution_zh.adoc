@@ -1,0 +1,13 @@
+=== 练习解答
+
+每个匹配字节都会在服务器检查下一个字节之前增加约 5 毫秒的延迟。保留已恢复的第一个字节，更改第二个字节，并用零填充标签的其余位置。耗时最长的候选值可能又匹配了一个字节。对第三和第四个字节重复此过程，并对每个候选值进行多次测量。
+
+如果当前会话的第一个字节是 `ab`，那么以下请求分别测试第二个字节为 `00` 和 `01` 的情况。将 `ab` 替换为你测量得到的字节，并继续使用之前相同的 `JSESSIONID`：
+
+[source,shell]
+----
+curl -sS --cookie "JSESSIONID=<your-session-id>" --write-out "\nTotal: %{time_total}s\n" "http://localhost:8080/WebGoat/crypto/timing/verify-tag?message=WebGoat&signature=ab000000"
+curl -sS --cookie "JSESSIONID=<your-session-id>" --write-out "\nTotal: %{time_total}s\n" "http://localhost:8080/WebGoat/crypto/timing/verify-tag?message=WebGoat&signature=ab010000"
+----
+
+找到第二个字节后，在测试第三个字节时保留前两个字节。例如，`ab120000` 会测试前缀 `ab12`。四个字节都匹配时，端点会返回 `Valid signature`。请提交当前会话的四字节标签。你通过比较延迟恢复了认证值，并没有恢复 HMAC 机密。

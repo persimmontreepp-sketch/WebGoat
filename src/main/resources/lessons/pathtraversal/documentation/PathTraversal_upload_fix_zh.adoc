@@ -1,0 +1,11 @@
+=== 上传文件时的路径遍历
+
+开发人员意识到了该漏洞，并通过从输入中删除 `../` 实施了修复。
+练习内容仍然相同，你能绕过这个修复吗？
+
+|===
+|操作系统 |位置
+
+|`operatingSystem:os[]`
+|`webGoatTempDir:temppath[]PathTraversal`
+|===

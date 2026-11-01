@@ -1,0 +1,9 @@
+== 组件无处不在
+
+WebGoat 使用近 *200 个 Java 和 JavaScript* 库。与大多数 Java 应用一样，我们使用 Maven 管理 Java 依赖项，而对 JavaScript 则采用较为随意的管理策略。
+
+=== WebGoat 中存在易受攻击的组件吗？
+
+创建本课程时，WebGoat 使用的组件中包含十多个高风险漏洞。这些问题大多并非开发人员有意选择导致的。面对数百个组件，开发人员该如何跟踪这些信息？
+
+image::images/WebGoat-Vulns.png[caption="Figure: ", title="WebGoat Security Issues", alt="Security Issues", width="800", height="400", style="lesson-image"]

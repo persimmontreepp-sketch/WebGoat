@@ -1,0 +1,13 @@
+== Sources（源代码）标签页
+
+在 Sources 标签页中，你可以查看文件系统，并浏览用于创建网站的 HTML、CSS 和 JavaScript 文件。点击某个文件即可查看其内容。
+
+image::images/ChromeDev_Sources.jpg[DeveloperToolsSources,400,500,style="lesson-image"]
+
+== Network（网络）标签页
+
+在 Network 标签页中，可以查看网站发出的 HTTP 请求及其响应。
+点击某个请求，即可查看更详细的信息。
+上方蓝点对应的“时间线”表示这些请求和响应发生的时间。你也可以在时间线上点击并拖动，以查看特定时间范围内发出的请求。下方窗口只会显示该时间范围内的请求和响应。
+
+image::images/ChromeDev_Network.jpg[DeveloperToolsNetwork,400,500,style="lesson-image"]

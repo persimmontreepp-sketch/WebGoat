@@ -1,0 +1,12 @@
+== 识别基于 DOM 的 XSS 风险
+
+通常可以通过检查客户端代码中的路由配置来发现基于 DOM 的 XSS。查找会将输入“反映”到页面中的路由。
+
+在本示例中，你需要查找路由处理程序中的一些“测试”代码（WebGoat 主要使用 Backbone 作为 JavaScript 库）。有时测试代码会遗留在生产环境中（而且测试代码通常很简单，缺少安全性和质量控制！）。
+
+你的目标是找到该路由并利用它。不过首先要确定基本路由是什么。比如，查看本课程的 URL……它应该类似于 `/WebGoat/start.mvc#lesson/CrossSiteScripting.lesson/9`。此处的“基本路由”是：
+*start.mvc#lesson/*
+之后的 *CrossSiteScripting.lesson/9* 是由 JavaScript 路由处理程序处理的参数。
+
+那么，生产环境中遗留的测试代码对应什么路由？
+要回答这个问题，需要检查 JavaScript 源代码。

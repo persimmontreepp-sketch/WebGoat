@@ -1,0 +1,22 @@
+== SQL 注入的严重程度
+
+=== SQL 注入攻击的严重程度取决于：
+* 攻击者的技能和想象力
+* 纵深防御措施
+** 输入验证
+** 最小权限原则
+* 数据库技术
+
+=== 并非所有数据库都支持命令链接
+* Microsoft Access
+* MySQL Connector/J 和 C
+* Oracle
+
+=== PHP、Classic ASP、Cold Fusion 和较老的语言中更常见 SQL 注入
+* 这些语言未提供参数化查询支持
+* 较新版本已加入参数化查询
+* 早期 Web 技术使用者（即旧代码）
+
+=== 数据库各不相同（SQL Server）
+* 命令 shell：`master.dbo.xp_cmdshell 'cmd.exe dir c:'`
+* 注册表命令：`xp_regread`、`xp_regdeletekey` 等

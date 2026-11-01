@@ -1,0 +1,37 @@
+== 代码审查（2）
+
+与上一题相同，但这次我们只删除签名部分，保留原算法。
+
+[source]
+----
+eyJhbGciOiJIUzI1NiJ9.ew0KICAiYWRtaW4iIDogdHJ1ZSwNCiAgImlhdCIgOiAxNTE2MjM5MDIyLA0KICAic3ViIiA6ICIxMjM0NTY3ODkwIiwNCiAgInVzZXIiIDogIkpvaG4gRG9lIg0KfQ.
+
+{
+  "alg" : "HS256"
+},
+{
+  "admin" : true,
+  "iat" : 1516239022,
+  "sub" : "1234567890",
+  "user" : "John Doe"
+}
+----
+
+使用以下 `parse` 方法，我们仍然可以跳过签名检查。
+
+[source%linenums, java]
+----
+try {
+   Jwt jwt = Jwts.parser().setSigningKey(JWT_PASSWORD).parse(accessToken);
+   Claims claims = (Claims) jwt.getBody();
+   String user = (String) claims.get("user");
+   boolean isAdmin = Boolean.valueOf((String) claims.get("admin"));
+   if (isAdmin) {
+     removeAllUsers();
+   } else {
+     log.error("You are not an admin user");
+   }
+} catch (JwtException e) {
+  throw new InvalidTokenException(e);
+}
+----

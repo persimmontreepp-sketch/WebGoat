@@ -1,0 +1,31 @@
+== 安全实现 WebAuthn
+
+=== 不要自行编写验证逻辑
+
+解析 CBOR、COSE 密钥和证明声明并实现所有验证步骤很容易出错。请使用持续维护、实现了规范，并通过 FIDO 一致性工具测试的库：
+
+* Java：Spring Security WebAuthn 支持（基于 WebAuthn4J）、WebAuthn4J、Yubico `java-webauthn-server`
+* JavaScript/Node.js：SimpleWebAuthn
+* Python：`py_webauthn`；Go：`go-webauthn`；.NET：`fido2-net-lib`
+
+在 Spring Security 中，可通过固定的 RP ID 和来源允许列表来启用通行密钥支持：
+
+[source,java]
+----
+http.webAuthn(webAuthn -> webAuthn
+    .rpName("GoatBank")
+    .rpId("goatbank.example")
+    .allowedOrigins("https://goatbank.example"));
+----
+
+=== 库无法替你实施的规则
+
+* 在服务器上保存流程状态（challenge、账户、请求选项），并绑定到会话。每个 challenge 只能使用一次，并在几分钟后过期。
+* 将凭据注册到已登录的账户，而不是注册到请求中指定的账户。
+* 将用户句柄生成为 64 字节随机值。不要使用用户名、电子邮件地址或数据库 ID。
+* 配置 RP ID 和允许的来源；绝不要从请求头推导这些值。
+* 凭据取代密码时，要求用户验证。
+* 添加或删除凭据前要求用户重新验证，并通知用户。
+* 恢复流程的安全性至少要与凭据相当：使用恢复码、第二个已注册密钥或已验证身份，而不是只使用一条短信或电子邮件链接。
+* 允许用户查看、命名和删除已注册的凭据。
+* 不要在工单中记录或附加完整的 WebAuthn 请求；应像对待凭据一样保护它们。

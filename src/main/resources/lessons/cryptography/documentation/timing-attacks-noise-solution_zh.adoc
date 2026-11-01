@@ -1,0 +1,13 @@
+=== 练习解答
+
+此端点对 `WebGoat with noise` 进行身份验证，因此会计算不同于前一个练习的标签。每个请求都会增加 0 到 8 毫秒的随机延迟，而每个匹配字节大约增加 2 毫秒。因此，单个慢速响应不足以判断一个字节。
+
+先从以下首字节候选值开始。保持 `JSESSIONID` Cookie 不变，并将消息中的空格编码为 `%20`：
+
+[source,shell]
+----
+curl -sS --cookie "JSESSIONID=<your-session-id>" --write-out "\nTotal: %{time_total}s\n" "http://localhost:8080/WebGoat/crypto/timing/verify-noisy?message=WebGoat%20with%20noise&signature=00000000"
+curl -sS --cookie "JSESSIONID=<your-session-id>" --write-out "\nTotal: %{time_total}s\n" "http://localhost:8080/WebGoat/crypto/timing/verify-noisy?message=WebGoat%20with%20noise&signature=01000000"
+----
+
+已知前缀固定后，对每个候选值测试多次。比较中位数或截尾平均值，保留测量时间最长的候选值，并为它们收集更多样本。对每个字节重复此过程。即使单个请求耗时的分布有重叠，匹配的前缀仍会使响应时间分布发生偏移。不要重复使用针对 `WebGoat` 消息恢复的标签。当此端点返回 `Valid signature` 时，确认完整标签。

@@ -1,0 +1,57 @@
+=== 路径遍历的缓解措施
+
+正如之前的练习所示，保护文件上传功能可能很棘手。问题的根源在于未经验证就信任输入。
+在前面的示例中，一种解决方法是不信任用户输入，而是在服务器端生成随机文件名。
+
+如果必须根据用户输入保存文件，最安全的做法是检查规范路径。例如，在 Java 中：
+
+[source]
+----
+var multiPartFile = ...
+var targetFile = new File("/tmp", multiPartFile.getOriginalName());
+var canonicalPath = targetFile.getCanonicalPath();
+
+if (!canonicalPath.startWith("/tmp") {
+  throw new IllegalArgumentException("Invalid filename");
+}
+
+IOUtils.copy(multiPartFile.getBytes(), targetFile);
+----
+
+规范路径函数会将路径解析为绝对路径，并移除 `.` 和 `..` 等内容。你可以检查规范路径是否仍处于预期目录内。
+
+对于获取文件时的路径遍历，也可以使用上面介绍的相同技术。此外，作为纵深防御措施，还可以使用权限受限的专用用户运行应用，使其不能读写其他目录中的文件。
+
+无论如何，都应建立检测机制来发现此类情况，但要小心不要向用户返回明确的内部信息。每个细节都可能让攻击者了解你的系统。
+
+==== 请注意……
+
+如前面的示例所示，应谨慎选择获取参数的方法，特别是查询参数。Spring Boot 能较好地拒绝无效路径变量。总结如下：
+
+[source]
+----
+@Getter("/f")
+public void f(@RequestParam("name") String name) {
+  //name is automatically decoded so %2E%2E%2F%2E%2E%2Ftest will become ../../test
+}
+
+@Getter("/g")
+public void g(HttpServletRequest request) {
+  var queryString = request.getQueryString(); // will return
+}
+
+@Getter("/h")
+public void h(HttpServletRequest request) {
+  var name = request.getParam("name"); //will return ../../test
+----
+
+如果使用 `/f?name=%2E%2E%2F%2E%2E%2Ftest` 调用 `/f`，它会变成 `../../test`。如果使用 `/g?name=%2E%2E%2F%2E%2E%2Ftest` 调用 `g`，则会返回 `%2E%2E%2F%2E%2E%2Ftest`，*不会*进行解码。
+使用相同参数调用 `/h` 时，行为与 `/f` 相同。
+
+如你所见，请谨慎选择并熟悉要调用的方法。此类情况下，应编写覆盖编码字符的单元测试。
+
+==== Spring Boot 防护
+
+默认情况下，Spring Boot 会防止在路径中使用 `../` 等内容。这项防护由 `StrictHttpFirewall` 类实现。它会保护用户输入属于 `path` 的端点，例如 `/test/1.jpg`：如果将 `1.jpg` 替换为 `../../secret.txt`，请求就会被阻止。查询参数不受这项防护的保护。
+
+“文件上传”课程中还展示了更多漏洞示例。

@@ -1,0 +1,37 @@
+== 直接对象引用
+
+当应用使用客户端提供的输入访问数据和对象时，就会使用直接对象引用。
+
+=== 示例
+
+使用 GET 方法的直接对象引用示例如下：
+
+`https://some.company.tld/dor?id=12345`
+
+`https://some.company.tld/images?img=12345`
+
+`https://some.company.tld/dor/12345`
+
+=== 其他方法
+
+POST、PUT、DELETE 或其他方法也可能容易受到影响，主要区别在于所用方法及可能包含的载荷。
+
+== *不安全的*直接对象引用
+
+如果引用处理不当，允许绕过授权或泄露私人数据，而这些数据又可用于执行操作或访问用户本无权操作或访问的数据，则该引用被视为不安全。
+假设你以用户身份查看自己的个人资料，URL 类似于：
+
+`https://some.company.tld/app/user/23398`
+
+你可以在此查看自己的个人资料。如果导航到：
+
+`https://some.company.tld/app/user/23399` ……或替换末尾的数字，会发生什么？如果可以更改数字（用户 ID）并查看他人的个人资料，那么该对象引用就是不安全的。当然，这不仅适用于通过 GET 查看数据，也包括操纵数据的情况。
+
+=== 延伸阅读
+在开始练习之前，以下是一些关于不安全直接对象引用的阅读资料：
+
+* link:++https://www.owasp.org/index.php/Testing_for_Insecure_Direct_Object_References_(OTG-AUTHZ-004)++[]
+* https://www.owasp.org/index.php/Top_10-2017_A5-Broken_Access_Control
+* https://cheatsheetseries.owasp.org/cheatsheets/Insecure_Direct_Object_Reference_Prevention_Cheat_Sheet.html
+* https://www.owasp.org/index.php/Top_10_2013-A4-Insecure_Direct_Object_References
+* http://cwe.mitre.org/data/definitions/639.html

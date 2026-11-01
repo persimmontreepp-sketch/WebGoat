@@ -1,0 +1,9 @@
+== 练习：以 Jerry 的身份登录
+
+输入用户名并点击 *使用安全密钥登录*。GoatBank 会返回选项，模拟密钥会对 challenge 签名（它只持有 Tom 的凭据），随后 `/WebAuthn/authentication/finish` 的请求正文会显示在文本区域中。点击 *发送*，即可作为 Tom 登录。
+
+之前有一段时间 Jerry 无法登录。GoatBank 的工程师调试问题时，将 Jerry 浏览器发出的请求附加到了帮助台工单中。此类捕获内容（HAR 文件、代理日志、DevTools 截图）经常会出现在工单系统、聊天渠道和日志文件中。
+
+GoatBank 使用 Jerry 的公钥验证签名，并检查来源、RP ID 哈希和标志。
+
+*目标：*以 *Jerry* 的身份登录 GoatBank。

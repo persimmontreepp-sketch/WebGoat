@@ -1,0 +1,33 @@
+=== 使用 ZAP 拦截和修改请求
+
+==== 配置断点过滤器
+
+开始使用 ZAP 拦截请求之前，需要排除 WebGoat 框架的内部请求。否则，ZAP 也会在 WebGoat 内部运行所需的请求处停止。基本上，可以配置一个断点，在请求头包含 POST 时拦截请求。你可以添加其他规则，但需要排除轮询用的 `.mvc` 消息，否则会很烦人。
+
+按如下方式设置断点：
+
+image::images/breakpoint.png[Set breakpoint,style="lesson-image"]
+
+{nbsp} +
+
+在此可以看到已启用的断点。点击复选框可以暂时停用断点，并在即将拦截请求时重新启用。*不要再使用绿色/红色按钮。*
+
+image::images/breakpoint2.png[Active breakpoints,style="lesson-image"]
+
+{nbsp} +
+
+启用请求拦截并发出请求后，界面应类似如下：
+
+image::images/proxy-intercept-details.png[ZAP history tab,style="lesson-image"]
+
+==== 拦截并修改请求
+
+按上述说明设置拦截，然后点击下方的提交按钮提交表单/请求。请求被拦截（触发断点）后，按如下方式修改：
+
+* 将方法改为 GET
+* 添加请求头 `x-request-intercepted:true`
+* 删除请求正文，并改为发送值为 `Requests are tampered easily` 的查询字符串参数 `changeMe`（不包括单引号）
+
+然后点击播放按钮，让请求继续发送。
+
+注意：两个播放按钮的行为略有不同，这部分留给你自行尝试和探索。

@@ -1,0 +1,15 @@
+== Console（控制台）标签页
+
+在控制台标签页中，可以查看已加载的 JavaScript 文件输出的内容。
+如果看到红色文字，不必担心。它虽然表示错误，但通常已经自行恢复。
+你也可以在控制台标签页中运行 JavaScript 代码。
+
+先使用快捷键 `CTRL+L.` 清空控制台。
+
+要运行 JavaScript，请点击控制台内部并输入类似下面的语句：
+`console.log("Hello WebGoat!");` 然后按回车。此时控制台中应会显示 `Hello WebGoat`。
+控制台也可以进行简单运算。例如输入 `1+3` 并按回车，控制台应显示 4。
+
+注意：控制台中可能会出现 `undefined`。可以忽略它；这只表示你调用的 JavaScript 函数没有返回值，因此结果为 `undefined.`
+
+image::images/ChromeDev_Console_Ex.jpg[DeveloperToolsConsoleExample,500,500,style="lesson-image"]

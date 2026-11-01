@@ -1,0 +1,11 @@
+=== 链接命令以泄露系统信息
+
+诊断控制台会将你的输入与 shell 命令拼接起来。尝试追加一条新命令（例如使用 `;` 或 `&&`），输出环境变量 `WEBGOAT_BUILD_TOKEN`。后端会显示原始输出。
+
+步骤：
+
+. 使用控制台运行一条正常的诊断命令。
+. 追加一条链接命令来输出令牌（例如在 Linux 上使用 `; echo $WEBGOAT_BUILD_TOKEN`，或在 Windows 上使用 `&& echo %WEBGOAT_BUILD_TOKEN%`）。
+. 从输出中复制完整的 `WEBGOAT_BUILD_TOKEN=...` 值或其 UUID，并在下方提交。
+
+如果能链接命令，就能运行服务账户权限允许的任何操作。

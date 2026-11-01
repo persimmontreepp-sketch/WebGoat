@@ -1,0 +1,15 @@
+== 练习：向 GoatBank 添加安全密钥
+
+你是 *Tom*，已经登录 GoatBank。你可以在安全设置中添加安全密钥。GoatBank 的管理员 *Jerry* 也使用安全密钥登录。
+
+你不需要实体密钥：WebGoat 会模拟 Tom 的安全密钥和构建 `clientDataJSON` 的浏览器部分，就像 Chrome DevTools 中的虚拟身份验证器一样。
+
+. 点击 *添加安全密钥*，向 GoatBank 请求注册选项。
+. 点击 *触碰安全密钥*，让模拟密钥创建新的密钥对。GoatBank 的 JavaScript 即将发送的请求正文会显示在文本区域中。
+. 点击 *完成注册*，将该请求发送到 `/WebAuthn/registration/finish`。
+
+GoatBank 会正确验证 challenge、origin、RP ID 哈希、标志和证明。
+
+*目标：*让 GoatBank 将*你自己的*新安全密钥注册到 *Jerry* 的账户中。之后，你就可以使用自己持有的密钥以 Jerry 的身份登录。
+
+提示：你可以编辑文本区域中的请求正文，也可以使用 ZAP 等代理拦截请求。

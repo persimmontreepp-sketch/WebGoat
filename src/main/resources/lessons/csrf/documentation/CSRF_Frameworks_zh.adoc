@@ -1,0 +1,14 @@
+=== 框架提供的自动防护
+
+如今，大多数框架都默认支持 CSRF 防护。例如，Angular 拦截器默认会从名为 XSRF-TOKEN 的 Cookie 中读取令牌，并将其设置为 HTTP 请求头 X-XSRF-TOKEN。由于只有在你所在域名下运行的代码才能读取该 Cookie，后端便可确认 HTTP 请求来自你的客户端应用，而非攻击者。
+
+要实现此机制，后端服务器会将令牌设置在 Cookie 中。由于 Angular（JavaScript）需要读取 Cookie 值，因此该 Cookie 不应设置 HttpOnly 标记。每次向服务器发送请求时，Angular 都会将令牌放在 X-XSRF-TOKEN HTTP 请求头中。服务器可以验证两处令牌是否匹配，以此确认请求是在同一域名下发出的。
+
+*重要：请定义单独的 Cookie，不要重复使用会话 Cookie。*
+
+请记住，会话 Cookie 始终应设置 HttpOnly 标记。
+
+== 自定义请求头并不安全
+
+另一种防护方式是在每次请求中添加自定义请求头。如果所有服务器交互都通过 JavaScript 完成，这种方式就有效。在服务器端，只需检查请求中是否存在该请求头；如果不存在，就拒绝请求。
+一些框架默认提供这种实现，但研究人员 Alex Infuhr 发现该机制也可以被绕过。详情参见：https://insert-script.blogspot.com/2018/05/adobe-reader-pdf-client-side-request.html[Adobe Reader PDF - 客户端请求注入]。

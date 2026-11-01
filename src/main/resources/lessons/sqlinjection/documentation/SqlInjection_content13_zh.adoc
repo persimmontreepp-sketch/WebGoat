@@ -1,0 +1,43 @@
+== ORDER BY 子句
+
+问题：预处理语句是否总能防止 SQL 注入？
+答案：不一定。
+
+来看下面这条语句：
+
+----
+"SELECT * FROM users ORDER BY " + sortColumName + ";"
+----
+
+SQL 语法规范中的定义如下：
+
+----
+SELECT ...
+FROM tableList
+[WHERE Expression]
+[ORDER BY orderExpression [, ...]]
+
+orderExpression:
+{ columnNr | columnAlias | selectExpression }
+    [ASC | DESC]
+
+selectExpression:
+{ Expression | COUNT(*) | {
+    COUNT | MIN | MAX | SUM | AVG | SOME | EVERY |
+    VAR_POP | VAR_SAMP | STDDEV_POP | STDDEV_SAMP
+} ([ALL | DISTINCT][2]] Expression) } [[AS] label]
+
+基于 HSQLDB
+----
+
+这意味着 `orderExpression` 可以是 `selectExpression`，而后者也可以是函数。因此，我们可能可以通过 `case` 语句向数据库提问，例如：
+
+----
+SELECT * FROM users ORDER BY (CASE WHEN (TRUE) THEN lastname ELSE firstname END)
+----
+
+这样便可以在 `when(....)` 部分替换任何布尔表达式。无论是否使用预处理语句，该语句都会执行，因为它是有效查询。根据定义，ORDER BY 子句可以包含表达式。
+
+=== 缓解措施
+
+如果 Web 应用需要提供排序列，应使用允许列表验证 `ORDER BY` 语句的值。值应始终限制为类似“名字”或“姓氏”这样的选项。

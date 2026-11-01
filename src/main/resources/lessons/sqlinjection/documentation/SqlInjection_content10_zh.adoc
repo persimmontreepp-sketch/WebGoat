@@ -1,0 +1,28 @@
+== 参数化查询——Java 示例
+[source,java]
+-------------------------------------------------------
+public static String loadAccount() {
+  // Parser 仅返回有效的字符串数据
+  String accountID = getParser().getStringParameter(ACCT_ID, "");
+  String data = null;
+  String query = "SELECT first_name, last_name, acct_id, balance FROM user_data WHERE acct_id = ?";
+  try (Connection connection = dataSource.getConnection();
+       PreparedStatement statement = connection.prepareStatement(query)) {
+     statement.setString(1, accountID);
+     ResultSet results = statement.executeQuery();
+     if (results != null && results.first()) {
+       results.last(); // 此查询应只返回一条记录
+       if (results.getRow() <= 2) {
+         data = processAccount(results);
+       } else {
+         // 处理错误——数据库完整性问题
+       }
+     } else {
+       // 处理错误——未找到记录 }
+     }
+  } catch (SQLException sqle) {
+    // 记录并处理 SQL 异常 }
+  }
+  return data;
+}
+-------------------------------------------------------

@@ -1,0 +1,21 @@
+=== 第 2 步：添加新的课程类
+
+每门课程可以包含多个练习。首先，使用 Java 定义课程类：
+
+[source]
+----
+@Component
+public class LessonTemplate extends Lesson {
+ @Override
+    public Category getDefaultCategory() {
+        return Category.GENERAL;
+    }
+
+    @Override
+    public String getTitle() {
+        return "lesson-template.title";
+    }
+}
+----
+
+在 `org.owasp.webgoat.lessons` 下创建新的包，并将新课程添加到其中。

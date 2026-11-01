@@ -1,0 +1,10 @@
+:linkattrs:
+
+== 刷新令牌
+
+实现良好的访问令牌刷新策略非常重要。本练习基于 Bugcrowd 某私有漏洞赏金项目中发现的漏洞。完整分析请参阅 https://emtunc.org/blog/11/2017/jwt-refresh-token-manipulation/[此处, window="_blank"]。
+
+=== 练习
+
+去年发生的一起数据泄露事件留下了以下日志文件：link:images/logs.txt[此处]
+你能设法订购这些书，同时让 *Tom* 来付款吗？

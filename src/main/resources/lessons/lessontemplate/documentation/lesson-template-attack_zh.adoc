@@ -1,0 +1,107 @@
+=== 第 4 步：向课程添加练习
+
+通过练习，用户可以在课程中实践。课程可以包含多个练习，每项练习都需要实现 `AssignmentEndpoint` 类。来看一个示例：
+
+[source,java]
+----
+import org.owasp.webgoat.container.assignments.AssignmentEndpoint;@RestController // <1>
+@AssignmentHints({"lesson-template.hints.1", "lesson-template.hints.2", "lesson-template.hints.3"}) // <2>
+public class SampleAttack implements AssignmentEndpoint { // <3>
+
+    private final String secretValue = "secr37Value";
+
+    @Autowired
+    private UserSessionData userSessionData; // <4>
+
+    @PostMapping("/lesson-template/sample-attack") <5>
+    @ResponseBody
+    public AttackResult completed(@RequestParam("param1") String param1, @RequestParam("param2") String param2) { <6>
+        if (userSessionData.getValue("some-value") != null) {
+            // 在此执行所需的会话更新……也可以不做，这里仅为注释/示例
+            //return builder.failed(this).feedback("lesson-template.sample-attack.failure-2").build();
+        }
+
+        // 极简的成功示例。如何检测“成功”或“失败”，请参见其他现有课程
+        if (secretValue.equals(param1)) {
+            return success(this) // <7>
+                    .output("Custom Output ...if you want, for success")
+                    .feedback("lesson-template.sample-attack.success")
+                    .build();
+            // lesson-template.sample-attack.success 定义在 src/main/resources/i18n/WebGoatLabels.properties 中
+        }
+
+        // 否则
+        return failed(this) // <8>
+                .feedback("lesson-template.sample-attack.failure-2")
+                .output("Custom output for this failure scenario, usually html that will get rendered directly ... yes, you can self-xss if you want")
+                .build();
+    }
+----
+<1> 每个练习都是一个 Spring RestController。
+<2> 每项练习都可以定义提示列表。实际文本应放在 `src/main/resources/{lessonName}/i18n` 目录中的 `WebGoatLabels.properties` 文件里。
+<3> 每项练习都需要实现 `AssignmentEndpoint` 接口。该接口只是标记接口，因此无需实现方法。
+<4> 由于练习是基于 Spring 的类，因此可以自动装配所需的任何 Spring 管理组件。
+<5> 每项练习至少需要有一个映射，其方法签名见第 6 条。
+<6> 用户尝试解决练习时，需要返回 `AttackResult`。
+<7> 用户解决课程后，返回成功攻击结果。
+<8> 用户未解决课程时，返回失败攻击结果。
+
+{nbsp} +
+
+如你所见，练习是一个 REST 控制器，至少需要包含一个具有以下签名的方法：
+
+[source]
+----
+@RequestMapping(method = "...", path = "/lesson-template/solution")
+@ResponseBody
+public AttackResult solve(String param) {
+  ...
+}
+----
+
+=== 添加其他端点
+
+可以在练习中添加其他端点来支持不同的情况，例如：
+
+[source]
+----
+@GetMapping("lesson-template/shop/{user}")
+@ResponseBody
+public List<Item> getItemsInBasket(@PathVariable("user") String user) {
+  return List.of(new Item("WG-1", "WebGoat promo", 12.0), new Item("WG-2", "WebGoat sticker", 0.00));
+}
+----
+
+=== 将练习添加到 HTML 页面
+
+前面提到，一门课程可以包含多个练习。WebGoat 会自动发现练习，并在每门课程顶部显示导航栏。含有练习的页面初始为红色，用户解决练习后会变为绿色。要实现此功能，需要在 HTML 文件中添加：
+
+[source]
+----
+<div class="lesson-page-wrapper">
+  <div class="adoc-content" th:replace="~{doc:lesson-template-attack.adoc}"></div>
+  <div class="attack-container">
+    <div class="assignment-success"><i class="fa fa-2 fa-check hidden" aria-hidden="true"></i></div>
+    <form class="attack-form" accept-charset="UNKNOWN"
+          method="POST" name="form"
+          action="lesson-template/sample-attack">
+      <table>
+        <tr>
+          <td>two random params</td>
+          <td>parameter 1:<input name="param1" value="" type="TEXT" /></td>
+          <td>parameter 2:<input name="param2" value="" type="TEXT" /></td>
+          <td>
+            <input name="submit" value="Submit" type="SUBMIT"/>
+          </td>
+        </tr>
+      </table>
+    </form>
+    <div class="attack-feedback"></div>
+    <div class="attack-output"></div>
+  </div>
+</div>
+----
+
+表单的 `action` 应与用于判断用户是否已完成课程的方法相匹配，例如 `public AttackResult solved()`。
+
+至此，你已成功创建第一门 WebGoat 课程，其中包含一项练习！

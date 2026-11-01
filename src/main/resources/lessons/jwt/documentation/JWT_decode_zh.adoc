@@ -1,0 +1,20 @@
+== 解码 JWT 令牌
+
+=== JWT 工具
+接下来的活动要求读取、修改和篡改 JWT。webWolfLink:WebWolf[target=jwt] 可轻松完成这些操作；如果你想挑战自己并使用真实渗透测试工具，请看看以下工具：
+
+- https://www.jwt.io/[JWT.io 网页编辑器]
+- https://github.com/ticarpi/jwt_tool[jwt_tool Python 脚本]（*非常适合执行 JWT 攻击*）
+- https://portswigger.net/burp/documentation/desktop/testing-workflow/vulnerabilities/session-management/jwts[Burp Suite 的 JWT 工具和插件]（*渗透测试中最常用*）
+  - https://www.zaproxy.org/blog/2020-09-03-zap-jwt-scanner/[ZAP JWT 插件]
+
+=== 练习
+让我们试着解码一个 JWT 令牌。你可以在 WebWolf 中使用 webWolfLink:JWT[target=jwt] 功能，也可以使用任何其他工具。
+
+.给定以下令牌：
+[source]
+----
+eyJhbGciOiJIUzI1NiJ9.ew0KICAiYXV0aG9yaXRpZXMiIDogWyAiUk9MRV9BRE1JTiIsICJST0xFX1VTRVIiIF0sDQogICJjbGllbnRfaWQiIDogIm15LWNsaWVudC13aXRoLXNlY3JldCIsDQogICJleHAiIDogMTYwNzA5OTYwOCwNCiAgImp0aSIgOiAiOWJjOTJhNDQtMGIxYS00YzVlLWJlNzAtZGE1MjA3NWI5YTg0IiwNCiAgInNjb3BlIiA6IFsgInJlYWQiLCAid3JpdGUiIF0sDQogICJ1c2VyX25hbWUiIDogInVzZXIiDQp9.9lYaULTuoIDJ86-zKDSntJQyHPpJ2mZAbnWRfel99iI
+----
+
+复制并粘贴上面的令牌，然后解码它。你能找出令牌中包含的用户吗？

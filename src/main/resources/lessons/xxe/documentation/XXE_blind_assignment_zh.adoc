@@ -1,0 +1,15 @@
+== 盲注 XXE 练习
+
+上一页展示了如何使用 XXE 攻击 ping 服务器。本练习中，试着制作一个 DTD，将 WebGoat 服务器上 `secret.txt` 文件的内容上传到 WebWolf 服务器。你可以使用 WebWolf 托管 DTD。`secret.txt` 位于 WebGoat 服务器的以下位置，因此无需扫描所有目录和文件：
+
+|===
+|操作系统 |位置
+
+|`operatingSystem:os[]`
+|`webGoatTempDir:temppath[]XXE/username:user[]/secret.txt`
+
+|===
+
+例如，可以通过 WebWolf landing 页面上传此文件：`webWolfRootLink:landing?text=contents_file[noLink,target=landing]`
+（注意：此端点完全由你控制。）
+获取文件内容后，请将其作为新评论发布到页面上，即可完成课程。

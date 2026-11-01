@@ -1,0 +1,18 @@
+== 利用 http://web.nvd.nist.gov/view/vuln/detail?vulnId=CVE-2013-7285[CVE-2013-7285]（XStream）
+
+注意：只有在使用 WebGoat Docker 镜像时，本课程才有效。
+
+WebGoat 使用 XML 文档向联系人数据库添加联系人。
+[source,xml]
+----
+<contact>
+    <id>1</id>
+    <firstName>Bruce</firstName>
+    <lastName>Mayhew</lastName>
+    <email>webgoat@owasp.org</email>
+</contact>
+----
+
+本练习所需的 Java 接口是 `org.owasp.webgoat.lessons.vulnerablecomponents.Contact`。
+先发送上方联系人，查看正常响应；然后阅读 CVE 漏洞文档（在互联网中搜索），并尝试触发该漏洞。
+本示例允许你直接输入 XML，而不必拦截并修改请求。你需要提供联系人对象的 XML 表示形式，WebGoat 会使用 `XStream.fromXML(xml)` 将其转换为 Contact 对象。

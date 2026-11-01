@@ -1,0 +1,10 @@
+== 示例
+
+SQL 注入远不止能读取单个用户的数据。下面只是黑客可能输入到表单字段（或任何接受用户输入的地方）以利用 SQL 注入漏洞的几个示例：
+
+* `+Smith' OR '1' = '1+` +
+结果为 `+SELECT * FROM users WHERE name = 'Smith' OR TRUE;+`，这会返回 users 表中的所有条目。
+* `+Smith' OR 1 = 1; --+` +
+结果为 `+SELECT * FROM users WHERE name = 'Smith' OR TRUE;--';+`，与第一个示例一样，也会返回 users 表中的所有条目。
+* `+Smith'; DROP TABLE users; TRUNCATE audit_log; --+` +
+将多个 SQL 命令链接起来，既删除 users 表，也删除 audit_log 表中的所有条目。

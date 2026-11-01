@@ -1,0 +1,10 @@
+== 自我 XSS 还是反射型 XSS？
+
+你应该已经能够通过上一个示例执行脚本。不过在这个阶段，它被视为“自我 XSS”。
+
+为什么？
+
+因为没有链接触发该 XSS。
+你可以亲自试试会发生什么……访问：
+
+link:CrossSiteScripting/attack5a?QTY1=1&QTY2=1&QTY3=1&QTY4=1&field1=<script>alert('my%20javascript%20here')</script>4128+3214+0002+1999&field2=111["CrossSiteScripting/attack5a?QTY1=1&QTY2=1&QTY3=1&QTY4=1&field1=<script>alert('my%20javascript%20here')</script>4128+3214+0002+1999&field2=111",window=_blank]

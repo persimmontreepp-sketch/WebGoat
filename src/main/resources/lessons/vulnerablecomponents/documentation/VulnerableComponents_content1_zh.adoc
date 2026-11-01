@@ -1,0 +1,5 @@
+== 2013 OWASP Top 10 - A9
+
+早在 2013 年，OWASP 等思想领袖就认识到，“我们”需要关注这个问题。
+
+image::images/OWASP-2013-A9.png[caption="Figure: ", title="2013 OWASP - Top 10 - A9", alt="A9", width="800", height="500", style="lesson-image" link="https://www.owasp.org/index.php/Top_10_2013-A9-Using_Components_with_Known_Vulnerabilities"]

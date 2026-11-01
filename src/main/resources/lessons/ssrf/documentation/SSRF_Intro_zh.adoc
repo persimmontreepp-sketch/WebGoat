@@ -1,0 +1,12 @@
+== 概念
+在服务端请求伪造（SSRF）攻击中，攻击者可以滥用服务器上的功能读取或更新内部资源。攻击者可以提供或修改 URL，而服务器端运行的代码会读取该 URL 指向的内容，或向其提交数据。此外，精心选择 URL 后，攻击者可能读取服务器配置（例如 AWS 元数据）、连接内部服务（例如启用了 HTTP 的数据库），或向本不应暴露的内部服务发送 POST 请求。
+
+== 目标
+在接下来的练习中，你需要检查浏览器发送给服务器的内容，并调整请求以获取服务器上的其他信息。
+
+== SSRF 操作指南
+* https://www.hackerone.com/blog-How-To-Server-Side-Request-Forgery-SSRF
+
+== Orange Tsai：SSRF 的新时代
+
+video::D1S-G8rJrEk[youtube, height=480, width=100%]

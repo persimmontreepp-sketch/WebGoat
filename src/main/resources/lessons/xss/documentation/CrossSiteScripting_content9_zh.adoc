@@ -1,0 +1,44 @@
+== XSS 防御资源
+
+=== Java OWASP Encoder
+不要因为此项目处于孵化阶段就有所顾虑。如果你在开发 Java Web 应用并防御 XSS，可以使用它。
+链接： https://www.owasp.org/index.php/OWASP_Java_Encoder_Project
+
+=== 通用 XSS 防御备忘单
+链接： https://cheatsheetseries.owasp.org/cheatsheets/Cross_Site_Scripting_Prevention_Cheat_Sheet.html
+
+=== DOM XSS 防御备忘单
+链接： https://cheatsheetseries.owasp.org/cheatsheets/DOM_based_XSS_Prevention_Cheat_Sheet.html
+
+=== XSS 过滤器绕过
+了解你的对手……
+链接 https://www.owasp.org/index.php/XSS_Filter_Evasion_Cheat_Sheet
+
+=== 特定 JavaScript 框架
+
+在客户端进行编码可能很棘手。下面提供一些参考资料。如果没有看到你使用的框架（例如 Ember、React 等），并希望提供建议或资源，请访问 https://github.com/WebGoat/WebGoat 提交 issue（最好附上建议/链接），或 fork 仓库并提交 pull request。
+
+==== jQuery
+请注意，如果你使用类似下面的代码：
+
+`_$selector.html(userInputHere)_`
+
+就会面临危险。如果确实需要使用它，请确保采用类似下面的方式：
+
+`_$selector.html(someEncodeHtmlMethod(userInputHere))_`
+
+或者：
+
+`_$selector.*text*(someEncodeHtmlMethod(userInputHere))_`
+
+如果只想获取用户输出的文本（http://stackoverflow.com/questions/9735045/is-jquery-text-method-xss-safe#9735118）
+
+==== Backbone.js
+（一个字符就可能带来巨大差异）
+
+http://underscorejs.org/#template
+
+https://nvisium.com/blog/2015/05/21/dont-break-your-backbone-xss-mitigation.html
+
+==== Angular
+Angular 努力做到默认转义，但事实证明，其表达式语言可能绕过“沙箱”。最好检查所用版本的详细信息，并从这里开始查阅：https://docs.angularjs.org/guide/security

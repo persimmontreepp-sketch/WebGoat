@@ -1,0 +1,13 @@
+=== 上传文件时的路径遍历
+
+开发人员发现 `full name` 输入字段没有验证输入，因此再次意识到该漏洞。随后尝试通过修复来解决问题。
+
+练习仍然相同，你能绕过已实施的修复吗？
+
+|===
+|操作系统 |位置
+
+|`operatingSystem:os[]`
+|`webGoatTempDir:temppath[]PathTraversal`
+
+|===

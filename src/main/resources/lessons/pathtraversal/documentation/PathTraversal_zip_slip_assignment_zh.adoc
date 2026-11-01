@@ -1,0 +1,13 @@
+=== Zip Slip 练习
+
+这次，开发人员只允许你上传 zip 文件。但他们在编程时犯了错误：上传的 zip 文件会被解压，却不会替换你的图片。你能找到绕过这个编程错误、覆盖当前图片的方法吗？
+
+为了让练习稍微简单一些，下面给出了需要替换的个人资料图片位置：
+
+|===
+|操作系统 |位置
+
+|`operatingSystem:os[]`
+|`webGoatTempDir:temppath[]PathTraversal/username:user[]/username:user[].jpg`
+
+|===

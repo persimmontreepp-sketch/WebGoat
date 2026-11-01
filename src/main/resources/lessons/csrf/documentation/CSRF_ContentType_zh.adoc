@@ -1,0 +1,20 @@
+== CSRF 与 Content-Type
+
+上一节中我们看到，依赖 Content-Type 并不能防止 CSRF。本节将介绍如何对未采取 CSRF 防护的 API 发动 CSRF 攻击。
+
+本练习中，你需要向我们的端点 POST 下面这条 JSON 消息：
+
+[source]
+----
+POST /csrf/feedback/message HTTP/1.1
+
+{
+  "name"    : "WebGoat",
+  "email"   : "webgoat@webgoat.org",
+  "content" : "WebGoat is the best!!"
+}
+----
+
+更多信息请参阅 http://pentestmonkey.net/blog/csrf-xml-post-request[此处]。
+
+请记住，你需要从另一个源发起请求（可以使用 WebWolf），并且需要登录 WebGoat。

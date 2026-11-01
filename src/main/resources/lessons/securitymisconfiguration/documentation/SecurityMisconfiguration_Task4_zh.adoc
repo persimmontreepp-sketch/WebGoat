@@ -1,0 +1,9 @@
+=== 加固配置
+
+运维团队同意修复前面的问题，但配置文件仍然很混乱。请使用下方表单（简化版 `application.properties`）设置关键加固值：
+
+. 禁用 `/actuator/env` 端点（`management.endpoint.env.enabled=false`）。
+. 不向未经身份验证的用户显示健康详情（`management.endpoint.health.show-details=never`）。
+. 移除内置的默认管理员用户（用户名和密码留空）。
+
+提交这些值以确认配置已加固。在实际环境中，应将这些设置纳入源代码管理和自动化环境模板。

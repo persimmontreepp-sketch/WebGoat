@@ -1,0 +1,27 @@
+== 缓解措施
+
+明确规定每个参数允许几个值。然后确保验证逻辑和业务逻辑使用相同的规范表示形式。
+
+对于只允许一个值的收款人字段，应拒绝包含多个值的请求：
+
+[source,java]
+----
+values = allValues("recipient");
+if (values == null || values.size() != 1) {
+   reject("Exactly one recipient is required");
+}
+
+recipient = values.get(0);
+validateAllowedRecipient(recipient);
+transfer(recipient, amount);
+----
+
+如果输入有意允许多个值，则应将其建模为集合并验证每个值。选择第一个或最后一个值并不是通用的防御方法。应用必须定义参数约定并始终如一地遵守。
+
+=== Spring MVC 处理方式
+
+Spring MVC 使用 `@RequestParam` 绑定查询参数和表单数据。将控制器参数声明为数组或 `List`，即可解析具有相同参数名称的所有值。`MultiValueMap` 可保留每个参数的所有值。
+
+不要依赖标量绑定行为来决定如何处理重复参数。对于安全敏感且只允许单值的字段，请使用 `HttpServletRequest.getParameterValues()` 读取完整值集合，拒绝意外的多值情况，并将唯一接受的值同时传给验证逻辑和业务逻辑。
+
+本课程也会读取完整值数组。其易受攻击的端点特意选取第一个收款人进行验证、选取最后一个收款人执行转账。该不一致是显式的，因此练习不依赖未文档化的 Spring 或 servlet 容器行为。

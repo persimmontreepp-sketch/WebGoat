@@ -1,0 +1,26 @@
+== CSRF 的影响
+
+影响范围仅受登录用户权限的限制（前提是网站/功能/操作没有得到适当保护）。IoT 设备和“智能”家电特别容易受到 CSRF 攻击。遗憾的是，许多消费级路由器也已被证明存在 CSRF 漏洞。
+
+== CSRF 防护方法
+
+=== SameSite Cookie 属性
+
+这是现代浏览器支持的一项新扩展，可限制 Cookie 的适用范围：只有在“同站点”请求中才会附带该 Cookie。
+例如，从 `webgoat.org` 发起对 `http://webgoat.org/something` 的请求时，会附带 SameSite Cookie。
+该属性有 strict 和 lax 两种模式。strict 模式不允许跨站请求。例如，你在 github.com 上通过 Facebook 点赞内容时，如果 Facebook 将 SameSite 设置为 strict，浏览器不会附带 Facebook 的 Cookie，因此会将你重定向到登录页面。
+更多信息请参阅：https://www.sjoerdlangkemper.nl/2016/04/14/preventing-csrf-with-samesite-cookie-attribute/
+
+=== 其他防护措施
+
+值得庆幸的是，许多（Web）应用框架现已内置 CSRF 防护支持。例如，Spring 和 Tomcat 默认启用该功能。只要你不将其关闭（如 WebGoat 中的设置），就可以防范 CSRF 攻击。
+
+有关 CSRF 防护的更多信息，请参阅：
+
+https://cheatsheetseries.owasp.org/cheatsheets/Cross-Site_Request_Forgery_Prevention_Cheat_Sheet.html（防护措施）
+
+https://owasp.org/www-community/attacks/csrf（攻击）
+
+https://tomcat.apache.org/tomcat-7.0-doc/config/filter.html#CSRF_Prevention_Filter / https://tomcat.apache.org/tomcat-8.0-doc/config/filter.html#CSRF_Prevention_Filter（Tomcat）
+
+https://docs.spring.io/spring-security/site/docs/current/reference/html5/#csrf

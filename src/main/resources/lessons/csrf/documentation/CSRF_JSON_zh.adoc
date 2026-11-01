@@ -1,0 +1,37 @@
+**但我的 API 只接受 JSON，而且没有启用 CORS，为什么仍可能受到 CSRF 攻击？**
+
+许多 Web 应用没有实施 CSRF 防护，只是因为它们只接受 `application/json` 作为 Content-Type，所以看起来似乎有一定保护。浏览器只能通过 XHR 请求发送这种 Content-Type。在浏览器发出此类请求之前，会先向服务器发送预检请求（请记住，CSRF 请求是跨源的）。如果预检响应不允许跨源请求，浏览器就不会发出实际请求。
+
+长话短说：这并不是有效的 CSRF 防护。
+
+防护不足的一个示例请参见 https://bugs.chromium.org/p/chromium/issues/detail?id=490015[此处]。事实证明，`Navigator.sendBeacon()` 曾允许发送 Content-Type 任意的 POST 请求。
+
+[quote, 'developer.mozilla.org']
+____
+`navigator.sendBeacon()` 方法可以异步地通过 HTTP 向 Web 服务器传输少量数据。该方法用于满足分析和诊断代码的需求：这些代码通常会尝试在文档卸载之前将数据发送到服务器。如果更早发送，可能会错过收集数据的机会……
+____
+
+{nbsp} +
+例如：
+
+[source]
+--
+function postBeacon() {
+    var data= new Blob([JSON.stringify({"author" :"WebGoat"})], {type : 'application/json'});
+    navigator.sendBeacon("http://localhost:8083", data)
+}
+--
+
+[quote, 'Eduardo Vela']
+____
+我认为，Content-Type 限制对那些意外地免受 CSRF 影响的网站是有用的。它们并非有意如此，但碰巧只接受 XML 或 JSON 载荷。
+
+话虽如此，依赖这种行为的网站显然应该修复，任何有信誉的渗透测试人员都会指出这一点。问题在于：浏览器是否有责任像保姆一样保护薄弱网站，还是应该将这些网站留作实现正义的代价？适者生存。
+
+在我看来，答案介于两者之间。一个好的起点是记录所有网站可能依赖的同源策略陷阱，尤其是涉及安全时。
+
+至于这个特定漏洞，如果它从未修复，我不认为会造成世界末日。不过话说回来，在今天这个时代，或许有人能通过 XML RPC 接口发射核导弹，那它可能就真会造成世界末日。
+____
+
+{nbsp} +
+Firefox 和 Chrome 都已修复该问题，但它说明了为什么应实施 CSRF 防护，而不是依赖 API 的 Content-Type。

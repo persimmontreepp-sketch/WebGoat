@@ -1,0 +1,30 @@
+=== 第 3 步：编写连接 HTML 页面
+
+前面提到，一门课程可以包含多个练习。WebGoat 会自动发现这些练习，并在每门课程顶部显示导航栏。包含练习的页面最初会显示为红色；用户完成练习后会变为绿色。为实现此功能，需要添加以下内容：
+
+[source]
+----
+<html xmlns:th="http://www.thymeleaf.org">
+
+  <div class="lesson-page-wrapper">
+    <div class="adoc-content" th:replace="~{doc:lessons/lessontemplate/documentation/
+lesson-template-intro.adoc}"></div>
+  </div>
+  <div class="lesson-page-wrapper">
+    <div class="adoc-content" th:replace="~{doc:lessons/lessontemplate/documentation/
+lesson-template-content.adoc}"></div>
+  </div>
+  <div class="lesson-page-wrapper">
+    <div class="adoc-content" th:replace="~{doc:lessons/lessontemplate/documentation/
+lesson-template-lesson-class.adoc}"></div>
+  </div>
+</html>
+----
+
+此文件应放在 `/src/main/resources/{lesson}/html/` 中。文件名应与第 2 步创建的 Java 类名相同。
+
+上面的代码片段会创建三个独立页面（导航栏），并加载我们为课程创建的 AsciiDoc 页面。
+
+这样，我们就创建了一门仅包含内容的基础课程。要使其生效，还需让 WebGoat 能够加载此课程。
+
+完成了！启动 WebGoat 后，新课程就会出现在菜单中。

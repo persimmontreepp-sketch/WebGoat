@@ -1,0 +1,59 @@
+== 注册流程
+
+注册会向用户*已经登录*（或正在创建）的账户添加新凭据。
+
+[source]
+----
+ Browser                              Server (relying party)          Security key
+    |  POST /registration/options  -->  |                                  |
+    |  <-- challenge, rp, user, algs    |  store challenge for this user   |
+    |                                   |                                  |
+    |  navigator.credentials.create() -------- CTAP2 makeCredential ------>|
+    |                                   |       user touches the key,      |
+    |                                   |       new key pair is created    |
+    |  <---------------------------------------- attestationObject --------|
+    |  POST /registration/finish  --->  |  verify, store public key        |
+----
+
+=== 服务器发送的选项
+
+[source,json]
+----
+{
+  "challenge": "q3xY...random 32 bytes...",
+  "rp":   { "id": "goatbank.example", "name": "GoatBank" },
+  "user": { "id": "kJ8f...random user handle...", "name": "tom", "displayName": "Tom Cat" },
+  "pubKeyCredParams": [ { "type": "public-key", "alg": -7 } ],
+  "excludeCredentials": [ { "type": "public-key", "id": "credential ID already registered" } ],
+  "attestation": "none"
+}
+----
+
+=== 浏览器返回的响应
+
+* `clientDataJSON`，由浏览器创建：
++
+[source,json]
+----
+{"type":"webauthn.create","challenge":"q3xY...","origin":"https://goatbank.example","crossOrigin":false}
+----
+* `attestationObject`，由身份验证器创建的 CBOR 映射，其中包含：
+** `fmt` 和 `attStmt`：证明声明（`none`、`packed`、`fido-u2f`、`tpm` 等）；
+** `authData`：`rpIdHash`（32 字节）| `flags`（1 字节）| `signCount`（4 字节）| `aaguid`（16 字节）| 凭据 ID 长度（2 字节）| 凭据 ID | 凭据公钥（COSE）。
+
+=== 服务器必须验证的内容
+
+以下为 WebAuthn 规范第 7.1 节步骤的简化版：
+
+. 流程由已通过身份验证的用户发起；服务器保存 challenge 和*账户*信息。
+. `clientDataJSON.type` 为 `webauthn.create`。
+. `clientDataJSON.challenge` 与本流程发出的 challenge 相同。challenge 只能使用一次且会过期。
+. `clientDataJSON.origin` 是预期来源之一。
+. `rpIdHash` 是 RP ID 的 SHA-256 哈希值。
+. 设置了 UP 标志；如果策略要求用户验证，也应设置 UV。
+. 公钥算法属于已请求的算法。
+. 证明声明有效且符合策略。
+. 任何账户都尚未注册此凭据 ID。
+. 凭据已保存到*发起此流程的账户*中。
+
+请注意，*没有*被签名的内容：注册过程中，没有任何内容能够证明浏览器认为自己正在为哪个账户注册。`user` 对象只会发送*给*身份验证器。客户端在此后发送的任何内容都可以被修改。

@@ -1,0 +1,27 @@
+= 密码学基础
+
+== 概念
+
+本课程介绍 Web 应用中常用的不同密码学技术。
+
+== 目标
+
+熟悉以下技术形式：
+
+* link:start.mvc#lesson/Cryptography.lesson/1[编码]
+
+* link:start.mvc#lesson/Cryptography.lesson/3[哈希]
+
+* link:start.mvc#lesson/Cryptography.lesson/4[加密]
+
+* link:start.mvc#lesson/Cryptography.lesson/5[签名]
+
+* link:start.mvc#lesson/Cryptography.lesson/6[密钥库]
+
+* link:start.mvc#lesson/Cryptography.lesson/7[安全默认配置]
+
+* link:start.mvc#lesson/Cryptography.lesson/8[后量子密码学]
+
+=== 练习
+
+每项内容讲解结束后，都会有一些练习。

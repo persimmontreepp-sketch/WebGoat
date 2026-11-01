@@ -1,0 +1,16 @@
+=== 使用静态代码分析发现 XXE 问题
+
+静态代码分析有助于识别代码中的漏洞。SonarQube 是一种知名的静态代码分析工具。扫描 WebGoat 源代码时，你会看到类似以下结果：
+
+image::images/sonar-issues.png[Sonar OWASP issues,300,200]
+如果选择 XXE 类别，它会显示 XXE 漏洞的位置。
+
+image::images/sonar-issue-xxe.png[XXE issue in Comments class]
+
+下一步是确定这是实际问题还是误报。正如你从挑战练习中了解到的，这是一个实际问题，而且是有意放在这里的。
+
+SonarQube 还会显示可以如何修复该问题。
+
+image::images/xxe-suggested-fix.png[XXE suggested fix]
+
+如果点击下方按钮，可以再次尝试 XXE 挑战，并会发现这些漏洞已得到缓解。

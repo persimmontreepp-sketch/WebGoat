@@ -1,0 +1,15 @@
+= 易受攻击的组件
+
+== 概念
+
+软件构建方式已经发生变化。开源社区不断成熟，开源软件也大量涌现，但人们并不总是会确认应用所用库的来源。参考：https://www.sonatype.com/state-of-the-software-supply-chain/introduction[软件供应链]
+
+本课程将介绍管理依赖库的困难、不管理这些依赖项的风险，以及判断自己是否面临风险的难点。
+
+image::images/OpenSourceGrowing2023.png[caption="Figure: ", title="The continued growth of Open Source software.", alt="SSC", width="500", height="262", style="lesson-image" link=https://www.sonatype.com/state-of-the-software-supply-chain/introduction]
+
+== 目标
+
+* 认识到使用开源组件与编写自定义代码同样重要。
+* 了解开源组件使用的管理情况，或缺乏管理的情况。
+* 理解物料清单对于确定开源组件风险的重要性。

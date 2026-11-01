@@ -1,0 +1,3 @@
+= 劫持会话
+
+本课程中，我们尝试预测 `hijack_cookie` 的值。WebGoat 使用 `hijack_cookie` 来区分已通过身份验证的用户和匿名用户。

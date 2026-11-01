@@ -1,0 +1,95 @@
+= HTTP 基础
+
+== 概念
+
+本课程介绍理解浏览器与 Web 应用之间数据传输的基础知识，以及使用 HTTP 攻击代理拦截请求后可以修改哪些内容。要攻击和防御 Web，必须先了解 Web 背后的协议。
+
+=== 什么是 HTTP
+
+HTTP（超文本传输协议）是一种 https://www.geeksforgeeks.org/computer-networks/open-systems-interconnection-model-osi/[第 7 层协议]，浏览器和 Web 服务器使用它来发送和接收数据。这些数据通常以 HTML 文件的形式发送，用于呈现网站。默认情况下，HTTP 是无状态协议，意味着服务器不会在请求之间记住客户端的任何信息。通过 Cookie，HTTP 可以在多个请求之间存储会话数据和偏好设置等信息。
+
+=== HTTP 请求的组成
+
+所有 HTTP 请求都从客户端向服务器发送请求开始，服务器处理请求后再向客户端作出响应。
+
+请求包含三个主要部分。观察下面客户端发送请求的示例，看看你能否找出这些部分：
+
+[source,http]
+----
+POST /submit HTTP/1.1
+Host: example.com
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:145.0)
+Content-Type: application/json
+Cookie: session_id=abc123xyz;
+Accept: text/html,application/json
+Connection: keep-alive
+
+{"submit":true}
+----
+
+第一行包含请求方法、位置、查询参数（格式为 `?param=value`）和协议版本。接下来的各行称为*请求头*，包含额外元数据，告诉服务器和客户端如何通信、使用哪些格式、缓存什么内容等。请求头的格式为 `Header: Value`。请求头之后有一个空行，标志着请求正文的开始。请求正文包含正在发送的实际数据，例如 HTML 文件、JSON 数据和图片。请求正文是可选的，最常见于 `POST` 请求，但除 `GET` 外，其他请求类型都可以包含正文。
+
+[cols="2*", options="header"]
+.HTTP 请求示例
+|===
+|请求行 |作用
+|`POST /submit HTTP/1.1`
+|`POST` 是 HTTP 请求方法。标准定义了 `9` 种 HTTP 请求方法。点击 https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Methods[此处]了解相关信息。`/submit` 是端点位置，通常用于告诉服务器要获取哪个文件。在此示例和现代服务器中，文件扩展名被省略。`HTTP/1.1` 告诉服务器正在使用哪个版本的 HTTP 协议。
+|`Host: example.com`
+|Host 请求头指定请求目标的域名和端口号。
+|`User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:145.0) Gecko/20100101 Firefox/145.0`
+|User-Agent 请求头向服务器发送客户端信息。
+|`Content-Type: application/json`
+|Content-Type 请求头告诉服务器客户端正在发送哪种类型的数据。
+|`Cookie: session_id=abc123xyz;`
+|如前所述，HTTP 默认是无状态协议。Cookie 请求头用于在请求之间保存状态。
+| `Accept: text/html,application/json`
+|Accept 请求头告诉服务器客户端希望在响应中获得哪些格式。
+|空行
+|请求正文总是在空行之后开始。
+| `{"submit": true}`
+|请求正文是一个 JSON 对象。
+|===
+
+=== HTTP 响应的组成
+
+下面是对上述 HTTP 请求的响应。
+
+[source,http]
+----
+HTTP/1.1 200
+Content-Type: application/json
+Date: Thu, 09 Apr 2026 20:01:34 GMT
+Connection: keep-alive
+Keep-Alive: timeout=60
+Set-Cookie: session_id=new_id;
+Content-Length: 39
+
+{"message": "Successfully submitted"}
+----
+
+HTTP 响应的格式与请求类似。与 HTTP 请求一样，第一行包含 HTTP 协议版本，但响应中还包含状态码。状态码是三位数字，用于告诉客户端服务器如何处理了请求。你可能已经熟悉一些 HTTP 状态码，例如 `404` 表示服务器没有找到客户端请求的内容。有关状态码及其含义的列表，请参阅 Mozilla 提供的 https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Status[实用参考指南]。
+
+状态行之后，响应其余部分的结构与请求相同：随后是请求头，再是一个空行，然后是可选的消息正文。
+
+[cols="2*", options="header"]
+.HTTP 响应示例
+|===
+|响应行 |作用
+|`HTTP/1.1 200`
+|HTTP 协议版本（HTTP 1.1）以及状态码。
+|`Content-Type: application/json`
+|Content-Type 请求头告诉客户端服务器正在发送哪种类型的数据。
+|`Date: Thu, 09 Apr 2026 20:01:34 GMT`
+|Date 请求头告诉客户端服务器何时收到请求。此请求头几乎只出现在响应中。
+| `Connection: keep-alive`
+|告诉客户端服务器希望重复使用同一个 TCP 连接。
+| `Keep-Alive: timeout=60`
+|表示 TCP 连接应保持打开 60 秒，然后再关闭。
+| `Set-Cookie: session_id=new_id;`
+|将客户端的 session_id Cookie 设置为新值。
+|空行
+|响应正文总是在空行之后开始。
+| `{"message": "Successfully submitted"}`
+|响应正文是一个 JSON 对象。
+|===

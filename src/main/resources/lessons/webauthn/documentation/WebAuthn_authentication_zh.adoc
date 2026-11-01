@@ -1,0 +1,39 @@
+== 身份验证流程
+
+[source]
+----
+ Browser                              Server (relying party)          Security key
+    |  POST /authentication/options -->|                                  |
+    |  <-- challenge, rpId,            |  store challenge for this login  |
+    |      allowCredentials            |                                  |
+    |  navigator.credentials.get() ----------- CTAP2 getAssertion ------->|
+    |                                  |       user touches the key       |
+    |  <---------------------------------- authenticatorData, signature --|
+    |  POST /authentication/finish --> |  verify, create session          |
+----
+
+响应（_断言_）包含：
+
+* `clientDataJSON`：`{"type":"webauthn.get","challenge":"...","origin":"https://goatbank.example",...}`
+* `authenticatorData`：`rpIdHash` | `flags` | `signCount`
+* `signature`：使用私钥，对 `authenticatorData || SHA-256(clientDataJSON)` 进行签名
+* `userHandle`：与可发现凭据一起存储的用户句柄（对不可发现凭据而言是可选的）
+
+=== 服务器必须验证的内容
+
+以下为 WebAuthn 规范第 7.2 节步骤的简化版：
+
+. 凭据 ID 属于已注册凭据。如果先识别了用户，该凭据必须属于该用户；如果存在 `userHandle`，它必须与凭据所有者相匹配。
+. `clientDataJSON.type` 为 `webauthn.get`。
+. `clientDataJSON.challenge` 与*本次登录尝试*发出的 challenge 相同。该 challenge 只能使用一次并会过期。
+. `clientDataJSON.origin` 是预期来源。
+. `rpIdHash` 是 RP ID 的 SHA-256 哈希值。
+. 设置了 UP 标志；如果凭据在没有密码的情况下使用，也必须设置 UV 标志。
+. 使用已存储的公钥验证签名。
+. 如果已存储或新收到的签名计数器不为零，则新计数器必须大于已存储的计数器。否则，身份验证器可能已被克隆。
+
+=== challenge 为什么重要
+
+签名可以证明私钥对*这一组确切的* `clientDataJSON` 和 `authenticatorData` 签了名。这些值本身不会过期。让断言只能使用一次的唯一因素，是服务器坚持要求其中包含刚刚发放的新鲜、不可预测的 challenge。如果不检查 challenge，用户曾经生成过的每个断言都可以被重复用作密码。
+
+签名计数器只是较弱的第二道防线：同步通行密钥和某些安全密钥始终报告 `0`；而且只有在用户自断言被捕获后再次登录过，重放的断言才会失败。

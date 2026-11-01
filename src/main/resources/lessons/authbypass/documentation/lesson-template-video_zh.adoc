@@ -1,0 +1,7 @@
+=== 更多内容：视频
+
+你可以按自己的需要组织和排版内容，也可以加入视频（但是否能播放取决于浏览器支持情况）。不过，实际课程最好围绕 Web 应用安全主题展开。
+
+video::video/sample-video.m4v[width=480,start=5]
+
+有关视频语法的详细说明，请参阅 http://asciidoctor.org/docs/asciidoc-syntax-quick-reference/#videos。

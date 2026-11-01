@@ -1,0 +1,7 @@
+=== 更多内容，也可以加入视频……
+
+你可以按需组织和格式化内容，甚至可以加入视频（但可能受浏览器支持情况限制）。不过，最好让内容与 Web 应用安全更相关。
+
+video::video/sample-video.m4v[width=480,start=5]
+
+视频语法的更多详情请参阅 http://asciidoctor.org/docs/asciidoc-syntax-quick-reference/#videos

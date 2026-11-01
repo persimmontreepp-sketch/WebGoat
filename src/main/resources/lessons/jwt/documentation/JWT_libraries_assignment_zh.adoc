@@ -1,0 +1,60 @@
+== 代码审查
+
+现在来检查代码，并思考如何利用 `alg: none` 攻击。因此我们使用以下令牌：
+
+[source]
+----
+eyJhbGciOiJub25lIiwidHlwIjoiSldUIn0.eyJzdWIiOiIxMjM0NTY3ODkwIiwidXNlciI6IkpvaG4gRG9lIiwiYWRtaW4iOnRydWUsImlhdCI6MTUxNjIzOTAyMn0.
+----
+
+解码后得到：
+
+[source]
+----
+{
+  "alg" : "none",
+  "typ" : "JWT"
+},
+{
+  "admin" : true,
+  "iat" : 1516239022,
+  "sub" : "1234567890",
+  "user" : "John Doe"
+}
+----
+
+[source%linenums, java]
+----
+try {
+   Jwt jwt = Jwts.parser().setSigningKey(JWT_PASSWORD).parseClaimsJws(accessToken);
+   Claims claims = (Claims) jwt.getBody();
+   String user = (String) claims.get("user");
+   boolean isAdmin = Boolean.valueOf((String) claims.get("admin"));
+   if (isAdmin) {
+     removeAllUsers();
+   } else {
+     log.error("You are not an admin user");
+   }
+} catch (JwtException e) {
+  throw new InvalidTokenException(e);
+}
+----
+
+[source%linenums, java]
+----
+try {
+   Jwt jwt = Jwts.parser().setSigningKey(JWT_PASSWORD).parse(accessToken);
+   Claims claims = (Claims) jwt.getBody();
+   String user = (String) claims.get("user");
+   boolean isAdmin = Boolean.valueOf((String) claims.get("admin"));
+   if (isAdmin) {
+     removeAllUsers();
+   } else {
+     log.error("You are not an admin user");
+   }
+} catch (JwtException e) {
+  throw new InvalidTokenException(e);
+}
+----
+
+你能发现其中的弱点吗？

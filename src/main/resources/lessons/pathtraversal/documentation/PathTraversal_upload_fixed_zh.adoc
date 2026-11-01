@@ -1,0 +1,12 @@
+=== 获取文件时的路径遍历
+
+终于，上传功能不再存在漏洞了——至少请帮我们验证一下 :-)
+本练习中，你需要获取以下文件的内容：
+
+|===
+|操作系统 |位置
+
+|`operatingSystem:os[]`
+|`webGoatTempDir:temppath[]PathTraversal/secret.txt`
+
+|===
