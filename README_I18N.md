@@ -4,7 +4,7 @@ WebGoat is mainly written in English, but it does support multiple languages.
 
 ## Default language selection
 
-1. Current supported languages are: en, fr, de, nl
+1. Current supported languages are: en, fr, de, nl, es, zh (Simplified Chinese)
 2. The primary language is based on the language setting of the browser.
 3. If the language is not in the list of supported language, the language is English
 4. Once logged in, you can switch between the supported languages using a language dropdown menu on the main page

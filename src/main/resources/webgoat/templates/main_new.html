@@ -91,6 +91,9 @@
                         <div th:case="'es'">
                             <img th:src="@{${'/css/img/'}+${#locale.language}+${'lang.svg'}}"></img><span class="caret"></span>
                         </div>
+                        <div th:case="'zh'">
+                            <img th:src="@{/css/img/cnlang.svg}"></img><span class="caret"></span>
+                        </div>
                         <div th:case="*">
                             <img th:src="@{${'/css/img/enlang.svg'}}"></img><span class="caret"></span>
                         </div>
@@ -121,6 +124,11 @@
                     <li role="presentation">
                         <a role="menuitem" th:href="@{/start.mvc?lang=es#lesson/WebGoatIntroduction.lesson}">
                             <img th:src="@{${'/css/img/eslang.svg'}}" alt="Spanish" height="20"></img> Español
+                        </a>
+                    </li>
+                    <li role="presentation">
+                        <a role="menuitem" th:href="@{/start.mvc?lang=zh#lesson/WebGoatIntroduction.lesson}">
+                            <img th:src="@{/css/img/cnlang.svg}" alt="简体中文" height="20"></img> 简体中文
                         </a>
                     </li>
                 </ul>
